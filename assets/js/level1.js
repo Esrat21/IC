@@ -103,12 +103,10 @@ function die() {
             })
         })
         .done(function(){
-           console.log('morreu e mandou');
            morreu = true;
         })
         .fail(function(jqXHR, textStatus, msg){
             console.log(msg);
-            console.log('morreu e nao mandou');
             morreu = true;
         });
     }

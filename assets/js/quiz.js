@@ -11,7 +11,7 @@ class Quiz extends Phaser.Scene {
     }
 
     preload() {
-        this.scale.setGameSize(1000, 600);
+        this.scale.setGameSize(1100, 600);
         this.load.scenePlugin({
             key: 'rexuiplugin',
             url: 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexuiplugin.min.js',
@@ -28,23 +28,20 @@ class Quiz extends Phaser.Scene {
             let sss = "";
             let ss = data["pergunta"].split(' ');
 
-            console.log(ss);
-            let c=1
+            //console.log(ss);
+            let c=1;
+            quest = retornaQuiz(ss); 
+            ss = data["alternativas"];
+            var alternativas = [];
+            var ids = [];
 
-            ss.forEach(i => {
-                let temp = sss+" "+i;
-                if(sss.length==0){
-                    sss = sss + i
-
-                }else if(temp.length < 45*c){
-                    sss = sss + " " + i;
-                }else{
-                    sss = sss + "\n" + i;
-                    c++;
-                }
-            });
-
-            quest = sss;
+            for(let alt in ss){
+                ids.push(ss[alt]["id"]);
+                alternativas.push(retornaQuiz(ss[alt]["descricao"].split(" ")));
+            }
+            console.log(ids)
+            //console.log(alternativas);
+            
 
         }catch(err){
             console.log(err);
@@ -63,12 +60,20 @@ class Quiz extends Phaser.Scene {
 
                 description: createLabel(this, quest),
 
-                choices: [
-                    createLabel(this, 'A) São mais leves que o ar atmosférico'),
-                    createLabel(this, 'B) São mais pesados que o ar atmosférico'),
-                    createLabel(this, 'C) Possuem densidade menor que o ar atmosférico'),
-                    createLabel(this, 'D) Possuem densidade maior que o ar atmosférico')
-                ],
+                choices: 
+                    (
+                        (context)=>{
+                            let labels = [];
+
+                            for(let alt in alternativas){
+                    
+                                labels.push(createLabel(context, alternativas[alt]));
+                            }
+                            //console.log(labels)
+                            return labels;
+                        }
+                    )(this)
+                ,
 
                 actions: [
                     //createLabel(this, 'confirmar')
@@ -160,23 +165,25 @@ class Quiz extends Phaser.Scene {
                     data: JSON.stringify({ 
                         aluno: 0,
                         fase: 0,
-                        detalhes: "completou a fase",
+                        detalhes: "completou a fase e enviou a resposta de id: " + ids[index],
                         tipo: "fim da fase",
                         comeco: hrInicio ,// formatar Y-m-d H:i:s
                         fim: hrFim ,// formatar Y-m-d H:i:s
                         objeto: JSON.stringify({
-                            
+                            idRespostas: ids
                         }),
                     })
                 })
-                .done(function(){
-                   console.log('foi');
+                .done(function(data){
+                   //console.log('foi');
                 })
                 .fail(function(jqXHR, textStatus, msg){
                     console.log(msg);
-                    console.log(jqXHR);
-                    console.log(textStatus);
                 });
+
+               //console.log(dialog.height)
+              // console.log(dialog.width)
+
 
             }, this)
             .on('button.over', function(button, groupName, index, pointer, event) {
@@ -185,6 +192,12 @@ class Quiz extends Phaser.Scene {
             .on('button.out', function(button, groupName, index, pointer, event) {
                 button.getElement('background').setStrokeStyle();
             });
+
+            this.scale.setGameSize(1000, dialog.height+120);
+            dialog.setY((dialog.height/2)+85    )
+            console.log(dialog.height)
+            console.log(dialog.x)// = this.sys.game.width/2
+            console.log(dialog.y)// = this.sys.game.height/2
     }
 
     update() {
@@ -220,7 +233,7 @@ var createLabel = function(scene, text) {
         background: scene.rexUI.add.roundRectangle(0, 0, 100, 40, 20, 0x5e92f3),
 
         text: scene.add.text(0, 0, text, {
-            fontSize: '32px'
+            fontSize: '22px'
         }),
 
         space: {
@@ -232,6 +245,22 @@ var createLabel = function(scene, text) {
     });
 }
 
-function organizarQuiz(){
-    
+function retornaQuiz(ss){
+    let c = 1;
+    let sss = "";
+
+    ss.forEach(i => {
+        let temp = sss+" "+i;
+        if(sss.length==0){
+            sss = sss + i
+
+        }else if(temp.length < 45*c){
+            sss = sss + " " + i;
+        }else{
+            sss = sss + "\n" + i;
+            c++;
+        }
+    });
+
+    return sss;
 }
