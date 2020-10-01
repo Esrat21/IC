@@ -40,30 +40,36 @@ var content = `O elemento Hélio foi descoberto por Pierre - Jules - César Jans
 
 var quest,r1,r2,r3,r4;
 
+let vMortes = []
+let ob = [];
+
 function die() {
-    
     //console.log("Tile X: " + parseInt(player.x / 16) + "\nTile Y: " + parseInt(player.y / 16));
+    
     let px = player.x;
     let py = player.y;
 
+    let obstaculos = ["baloes","airship"];
+    if(px>370 && px<670){
+        ob.push(obstaculos[0]);
+    }else if(px>1000 && px<1745){
+        ob.push(obstaculos[1]);
+    }
+
     player.x = ckpx;
     player.y = ckpy;
-    //console.log('MORREU');
+    
     if (mortes == 0) {
         hp[0].play('death');
+        vMortes[0] = [px,py]
+
     } else if (mortes == 1) {
         hp[1].play('death');
+        vMortes[1] = [px,py]
+
     } else if (mortes == 2) {
         hp[2].play('death');
-        
-        let obstaculos = ["baloes","airship"];
-        let ob;
-
-        if(px>370 && px<670){
-            ob = obstaculos[0];
-        }else if(px>1000 && px<1745){
-            ob = obstaculos[1];
-        }
+        vMortes[2] = [px,py]
 
         //formatando hora da morte
         hrFim = new Date();
@@ -91,7 +97,8 @@ function die() {
                 comeco: hrInicio ,//Y-m-d H:i:s
                 fim: hrFim ,//Y-m-d H:i:s
                 objeto: JSON.stringify({
-                    obstaculo: obs
+                    obstaculos: ob,
+                    coordenadas: vMortes
                 }),
             })
         })
