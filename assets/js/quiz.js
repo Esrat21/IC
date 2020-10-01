@@ -1,5 +1,7 @@
 var result = 0;
 var hrFim;
+var correto = -1;
+var texto;
 
 class Quiz extends Phaser.Scene {
     constructor() {
@@ -20,6 +22,8 @@ class Quiz extends Phaser.Scene {
     }
 
     async create() {
+        texto =  this.add.text(450, 100, "", { fontFamily: 'Arial', fontSize: 26, color: '#FFF' });
+        texto.setVisible(false)
 
         try{
             const data = await getQuiz();
@@ -27,6 +31,7 @@ class Quiz extends Phaser.Scene {
 
             let sss = "";
             let ss = data["pergunta"].split(' ');
+            var quizId = data["quiz_id"]
 
             //console.log(ss);
             let c=1;
@@ -158,6 +163,7 @@ class Quiz extends Phaser.Scene {
 
                 console.log("h': " + hrFim);
 
+                //envia que terminou a fase e enviou o quiz
                 $.ajax({
                     method: "POST",
                     url: "http://10.147.20.34/log",
@@ -174,11 +180,45 @@ class Quiz extends Phaser.Scene {
                         }),
                     })
                 })
-                .done(function(data){
+                .done(function(){
                    //console.log('foi');
                 })
                 .fail(function(jqXHR, textStatus, msg){
                     console.log(msg);
+                });
+
+                quizId = Number.parseInt(quizId)
+
+                //envia o resultado do quiz e rrecebe uma resposta se esta certo ou nao
+                $.ajax({
+                    method: "POST",
+                    url: "http://10.147.20.34/responderQuiz",
+                    headers: { 'Content-Type': 'application/json' },
+                    data: JSON.stringify({ 
+                        aluno: 0,
+                        quiz: quizId,
+                        escolha: ids[index],
+                        data_hora: hrFim ,//Y-m-d H:i:s
+                    })
+                })
+                .done(function(data){ 
+                    correto = data["Correto"];
+                    if(correto == 1){
+                        console.log("ta certo rapaz")
+                        correto = -1;
+                        texto.setText("ACERTO MIZERAVI");
+                        dialog.setVisible(false);
+                        texto.setVisible(true);
+                    }else if( correto == 0){
+                        console.log("VAI ESTUDA SEU MULEKIN")
+                        correto = -1;
+                        texto.setText("VAI ESTUDAR SEU MULEKIN");
+                        dialog.setVisible(false);
+                        texto.setVisible(true);
+                    }
+                })
+                .fail(function(jqXHR, textStatus, msg){
+                    console.log(jqXHR);
                 });
 
                //console.log(dialog.height)
@@ -194,14 +234,12 @@ class Quiz extends Phaser.Scene {
             });
 
             this.scale.setGameSize(1000, dialog.height+120);
-            dialog.setY((dialog.height/2)+85    )
-            console.log(dialog.height)
-            console.log(dialog.x)// = this.sys.game.width/2
-            console.log(dialog.y)// = this.sys.game.height/2
+            dialog.setY((dialog.height/2)+85)
+
     }
 
     update() {
-
+        
     }
 }
 
