@@ -43,6 +43,9 @@ var quest,r1,r2,r3,r4;
 function die() {
     
     //console.log("Tile X: " + parseInt(player.x / 16) + "\nTile Y: " + parseInt(player.y / 16));
+    let px = player.x;
+    let py = player.y;
+
     player.x = ckpx;
     player.y = ckpy;
     //console.log('MORREU');
@@ -52,8 +55,15 @@ function die() {
         hp[1].play('death');
     } else if (mortes == 2) {
         hp[2].play('death');
-        morreu = true;
-        //location.reload();
+        
+        let obstaculos = ["baloes","airship"];
+        let ob;
+
+        if(px>370 && px<670){
+            ob = obstaculos[0];
+        }else if(px>1000 && px<1745){
+            ob = obstaculos[1];
+        }
 
         //formatando hora da morte
         hrFim = new Date();
@@ -76,21 +86,23 @@ function die() {
             data: JSON.stringify({ 
                 aluno: 0,
                 fase: 0,
-                detalhes: "morreu nas coordenadas x: " + player.x + ", y: " + player.y,
+                detalhes: "morreu nas coordenadas x: " + px + ", y: " + py,
                 tipo: "morte",
-                comeco: hrInicio ,// formatar Y-m-d H:i:s
-                fim: hrFim ,// formatar Y-m-d H:i:s
+                comeco: hrInicio ,//Y-m-d H:i:s
+                fim: hrFim ,//Y-m-d H:i:s
                 objeto: JSON.stringify({
-                    
+                    obstaculo: obs
                 }),
             })
         })
         .done(function(){
            console.log('morreu e mandou');
+           morreu = true;
         })
         .fail(function(jqXHR, textStatus, msg){
             console.log(msg);
             console.log('morreu e nao mandou');
+            morreu = true;
         });
     }
 
@@ -684,11 +696,13 @@ class Level1 extends Phaser.Scene {
             this.scene.start('quiz');
         }
         if(morreu){
-            this.scene.remove('level1');
-            this.scene.start('gameOver');
-            
+            //this.scene.remove('level1');
+            //this.scene.start('menu');
+            location.reload();
             
         }
+
+        //console.log(player.x)
 
     }
 

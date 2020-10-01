@@ -46,7 +46,6 @@ class Quiz extends Phaser.Scene {
 
             quest = sss;
 
-            quest = data["pergunta"];
         }catch(err){
             console.log(err);
         }       
