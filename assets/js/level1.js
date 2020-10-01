@@ -66,6 +66,7 @@ function die() {
         h = h.replace("-","/");
         h = h.replace("-","/");
         hrFim = h;
+
         console.log("h': " + hrFim);
 
         $.ajax({
@@ -85,12 +86,11 @@ function die() {
             })
         })
         .done(function(){
-           console.log('foi');
+           console.log('morreu e mandou');
         })
         .fail(function(jqXHR, textStatus, msg){
             console.log(msg);
-            console.log(jqXHR);
-            console.log(textStatus);
+            console.log('morreu e nao mandou');
         });
     }
 
@@ -125,7 +125,7 @@ function won() {
     canMove = false;
     //console.log('ganhou');
     win = true;
-} //colocar simblo nos baloes
+}
 
 class Level1 extends Phaser.Scene {
     constructor() {
