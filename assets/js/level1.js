@@ -1,5 +1,8 @@
 var lastAnim; // 0 = idle -- 1 = run right -- 2 = run left;
 var player;
+var coin;
+var coins;
+var coinSound;
 var a;
 var d;
 var z;
@@ -28,6 +31,8 @@ var winimg;
 var dieimg;
 var morreu = false;
 var win;
+var score;
+var scoreValue = 0;
 
 var activebox = 0;
 
@@ -87,7 +92,7 @@ function die() {
 
         $.ajax({
             method: "POST",
-            url: "http://10.147.20.34/log",
+            url: "http://yanpegyn.000webhostapp.com/log",
             headers: { 'Content-Type': 'application/json' },
             data: JSON.stringify({ 
                 aluno: 0,
@@ -157,6 +162,9 @@ class Level1 extends Phaser.Scene {
         //virtual joystick
         this.load.plugin('rexvirtualjoystickplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexvirtualjoystickplugin.min.js', true);
 
+        //coin sound
+        this.load.audio('coinSound', './assets/sounds/coins.wav');
+
         //plugin do botao
         this.load.scenePlugin({
             key: 'rexuiplugin',
@@ -193,6 +201,14 @@ class Level1 extends Phaser.Scene {
         this.load.image('balaoHe', './assets/images/items/balaoHe.png');
         this.load.image('balaoNe', './assets/images/items/balaoNe.png');
         this.load.image('balaoAr', './assets/images/items/balaoAr.png');
+
+        //load gold coins
+        this.load.image('coin1', './assets/images/items/GoldCoin/gold_coin_round_star_1.png');
+        this.load.image('coin2', './assets/images/items/GoldCoin/gold_coin_round_star_2.png');
+        this.load.image('coin3', './assets/images/items/GoldCoin/gold_coin_round_star_3.png');
+        this.load.image('coin4', './assets/images/items/GoldCoin/gold_coin_round_star_4.png');
+        this.load.image('coin5', './assets/images/items/GoldCoin/gold_coin_round_star_5.png');
+        this.load.image('coin6', './assets/images/items/GoldCoin/gold_coin_round_star_6.png');
 
         //load zeppelin
         this.load.image('zeppelin', './assets/images/items/airBaloon.png');
@@ -264,6 +280,32 @@ class Level1 extends Phaser.Scene {
         player.body.setMaxVelocity(200, 250);
         ckpx = 298;
         ckpy = 176;
+
+        //score
+        score = this.add.text(350, 1, "Score: " + scoreValue, {fontSize: 12, color: '#fff' });
+        score.setScrollFactor(0);
+
+        //gold coins
+
+        coinSound = this.sound.add('coinSound');
+        coinSound.setVolume(0.25);
+
+        coins = this.physics.add.group();
+        coin = this.physics.add.sprite(50,170,'coin1');
+        coin.setScale(0.25,0.25)
+        coins.add(coin);
+
+        coin = this.physics.add.sprite(90,170,'coin1');
+        coin.setScale(0.25,0.25)
+        coins.add(coin);
+
+        coin = this.physics.add.sprite(120,170,'coin1');
+        coin.setScale(0.25,0.25)
+        coins.add(coin);
+
+        coin = this.physics.add.sprite(150,170,'coin1');
+        coin.setScale(0.25,0.25)
+        coins.add(coin);
 
 
         //baloes
@@ -385,7 +427,6 @@ class Level1 extends Phaser.Scene {
         hp.push(hp1);
 
         //Placa
-
         zpopup = this.add.sprite(296, 144, 'zpopup');
         zpopup.setScale(0.5, 0.5);
 
@@ -484,6 +525,8 @@ class Level1 extends Phaser.Scene {
             win();
         });
 
+        this.physics.add.overlap(player, coins,collectCoin);
+
         //Animations
         //Player
         this.anims.create({
@@ -529,6 +572,23 @@ class Level1 extends Phaser.Scene {
         zpopup.play('popup');
         zpopup.setVisible(false);
 
+        this.anims.create({
+            key: 'coinFlip',
+            frames:[
+                {key:'coin1'},
+                {key:'coin2'},
+                {key:'coin3'},
+                {key:'coin4'},
+                {key:'coin5'},
+                {key:'coin6'}
+            ],
+            framerate: 15,
+            repeat: -1
+        })
+        let coinnss = coins.getChildren();
+        for(let i in coinnss){
+            coinnss[i].play('coinFlip');
+        }
         //Entradas do teclado
 
         //joystick
@@ -619,6 +679,8 @@ class Level1 extends Phaser.Scene {
         mountain.tilePositionX = this.cameras.main.scrollX * .6;
         bgTrees.tilePositionX = this.cameras.main.scrollX * .7;
         fgTrees.tilePositionX = this.cameras.main.scrollX * .8;
+
+        score.setText("Score:" + scoreValue);
 
         if (player.x > 272 && player.x < 330) {
             if(canMove && (z.isDown || activebox==1)){
@@ -834,4 +896,10 @@ var createButton2 = function(scene, text) {
         },
         align: 'center'
     });
+}
+
+var collectCoin = function(player,coin){
+    coinSound.play();
+    coin.destroy(coin.x, coin.y);
+    scoreValue+=10;
 }

@@ -166,7 +166,7 @@ class Quiz extends Phaser.Scene {
                 //envia que terminou a fase e enviou o quiz
                 $.ajax({
                     method: "POST",
-                    url: "http://10.147.20.34/log",
+                    url: "http://yanpegyn.000webhostapp.com/log",
                     headers: { 'Content-Type': 'application/json' },
                     data: JSON.stringify({ 
                         aluno: 0,
@@ -192,7 +192,7 @@ class Quiz extends Phaser.Scene {
                 //envia o resultado do quiz e rrecebe uma resposta se esta certo ou nao
                 $.ajax({
                     method: "POST",
-                    url: "http://10.147.20.34/responderQuiz",
+                    url: "http://yanpegyn.000webhostapp.com/responderQuiz",
                     headers: { 'Content-Type': 'application/json' },
                     data: JSON.stringify({ 
                         aluno: 0,
@@ -246,7 +246,7 @@ class Quiz extends Phaser.Scene {
 function getQuiz(){
     return $.ajax({
         method: "GET",
-        url: "http://10.147.20.34/fase/0/quiz",
+        url: "http://yanpegyn.000webhostapp.com/fase/0/quiz",
         headers: { 'Content-Type': 'application/json' }
         
         
