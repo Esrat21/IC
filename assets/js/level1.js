@@ -35,6 +35,7 @@ var score;
 var scoreValue = 0;
 
 var activebox = 0;
+var activeSound = 1;
 
 var leftKeyDown
 var rightKeyDown
@@ -47,6 +48,7 @@ var quest,r1,r2,r3,r4;
 
 let vMortes = []
 let ob = [];
+
 
 function die() {
     //console.log("Tile X: " + parseInt(player.x / 16) + "\nTile Y: " + parseInt(player.y / 16));
@@ -109,11 +111,14 @@ function die() {
         })
         .done(function(){
            morreu = true;
+           //this.scene.start('gameOver');
         })
         .fail(function(jqXHR, textStatus, msg){
             console.log(msg);
             morreu = true;
+            //this.scene.start('gameOver');
         });
+        //this.scene.start('gameOver');
     }
 
     mortes++;
@@ -157,15 +162,20 @@ class Level1 extends Phaser.Scene {
         })
     }
 
+    init(){
+        morreu = false;
+    }
+
     preload() {
         this.scale.setGameSize(432, 224);
         //virtual joystick
         this.load.plugin('rexvirtualjoystickplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexvirtualjoystickplugin.min.js', true);
 
         //coin sound
-        this.load.audio('coinSound', './assets/sounds/coins.wav');
+        //this.load.audio('coinSound', './assets/sounds/coins.wav');
+        this.load.audio('coinSound', './assets/sounds/coins2.mp3');
 
-        //plugin do botao
+        //plugins 
         this.load.scenePlugin({
             key: 'rexuiplugin',
             url: 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexuiplugin.min.js',
@@ -231,9 +241,7 @@ class Level1 extends Phaser.Scene {
 
         //win - game over
         this.load.image('win', './assets/images/ui/win(1).png');
-
     }
-
 
     create() {
 
@@ -287,26 +295,19 @@ class Level1 extends Phaser.Scene {
 
         //gold coins
 
+        let arrX = [9,11,17,32,48,60,74,82,97,114];
+        let arrY = [10,10,9,5,10,7,6,4,7,6];
+
         coinSound = this.sound.add('coinSound');
         coinSound.setVolume(0.25);
 
         coins = this.physics.add.group();
-        coin = this.physics.add.sprite(50,170,'coin1');
-        coin.setScale(0.25,0.25)
-        coins.add(coin);
 
-        coin = this.physics.add.sprite(90,170,'coin1');
-        coin.setScale(0.25,0.25)
-        coins.add(coin);
-
-        coin = this.physics.add.sprite(120,170,'coin1');
-        coin.setScale(0.25,0.25)
-        coins.add(coin);
-
-        coin = this.physics.add.sprite(150,170,'coin1');
-        coin.setScale(0.25,0.25)
-        coins.add(coin);
-
+        for(let i =0;i<10;i++){
+            coin = this.physics.add.sprite((arrX[i]*16)+8,(arrY[i]*16)+8,'coin1');
+            coin.setScale(0.25,0.25)
+            coins.add(coin);
+        }
 
         //baloes
         var balao;
@@ -586,12 +587,36 @@ class Level1 extends Phaser.Scene {
             repeat: -1
         })
         let coinnss = coins.getChildren();
+
         for(let i in coinnss){
             coinnss[i].play('coinFlip');
         }
         //Entradas do teclado
 
         //joystick
+        var toast = this.rexUI.add.toast({
+            x:200,
+            y:200,
+            background: this.rexUI.add.roundRectangle(0, 0, 2, 2, 20, 0x888888),
+            text: this.add.text(0, 0, '', {
+                fontSize: '16px'
+            }),
+            space: {
+                left: 20,
+                right: 20,
+                top: 20,
+                bottom: 20,
+            },
+
+            duration: {
+                in: 250,
+                hold: 1000,
+                out: 250,
+            },
+        });
+
+        toast.setScrollFactor(0);
+
         if(this.sys.game.device.os.android == true || this.sys.game.device.os.iOS == true){
             this.scale.startFullscreen();
             this.scale.lockOrientation('landscape-primary');
@@ -615,14 +640,15 @@ class Level1 extends Phaser.Scene {
             //botao pular
             var expand = true;
             var buttons = this.rexUI.add.buttons({
-                    x: 380,
+                    x: 355,
                     y: 200,
                     width: 20,
                     orientation: 'x',
 
                     buttons: [
                         createButton2(this, '^'),
-                        createButton2(this,'Z')
+                        createButton2(this,'Z'),
+                        createButton2(this,'Som')
                     ],
                     expand: expand
                 })
@@ -634,6 +660,17 @@ class Level1 extends Phaser.Scene {
                         player.body.setVelocity(player.body.velocity.x, player.body.velocity.y - 100);
                     }else if(index == 1){
                         activebox = 1;
+                    }else if(index == 2){
+                        if(activeSound == 0){
+                            activeSound = 1;
+                            toast.show('som ativado');
+                            console.log('ativo');
+                        }else if(activeSound == 1){
+                            activeSound = 0;
+                            toast.show('som desativado');
+                            console.log('inativo');
+                        }
+                       
                     }
                 })
                 .on('button.over', function(button, groupName, index, pointer, event) {
@@ -763,10 +800,11 @@ class Level1 extends Phaser.Scene {
             this.scene.start('quiz');
         }
         if(morreu){
-            //this.scene.remove('level1');
-            //this.scene.start('menu');
-            location.reload();
-            
+            morreu = false;
+            //alert(morreu)
+            //this.scene.pause();
+            //this.scene.start('gameOver');  
+            location.reload();          
         }
 
         //console.log(player.x)
@@ -899,7 +937,10 @@ var createButton2 = function(scene, text) {
 }
 
 var collectCoin = function(player,coin){
-    coinSound.play();
+    if(activeSound == 1){
+        coinSound.play();
+    }
+   
     coin.destroy(coin.x, coin.y);
     scoreValue+=10;
 }

@@ -118,10 +118,9 @@ class Menu extends Phaser.Scene {
 
         if (check == 1) {
             check = 0;
-            this.scene.remove('menu');
             this.scene.start('level1');
-            //this.scene.start('quiz');
         }
+
     }
 }
 

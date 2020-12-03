@@ -38,6 +38,7 @@ class GameOver extends Phaser.Scene {
         buttons
             .on('button.click', function(button, index, pointer, event) {
                 check = 1;
+                
             })
             .on('button.over', function(button, groupName, index, pointer, event) {
                 button.getElement('background').setStrokeStyle(1, 0xffffff);
@@ -50,8 +51,25 @@ class GameOver extends Phaser.Scene {
     update() {
         if (check == 1) {
             check = 0;
-            this.scene.remove('gameOver');
-            this.scene.start('level1');
+            //this.scene.start('menu');
+            /*this.sys.game.destroy(true);
+            let cpnfig = {
+                type: Phaser.AUTO,
+                width: 432,
+                height: 224,
+                scale: {
+                    mode: Phaser.Scale.FIT
+                },
+                physics: {
+                    default: 'arcade',
+                    gravity: 0
+                },
+                scene: [Menu, GameOver, Level1, Quiz]
+            };
+            document.addEventListener('mousedown', function newGame () {
+                game = new Phaser.Game(config);
+                document.removeEventListener('mousedown', newGame);
+            });*/
         }
     }
 }

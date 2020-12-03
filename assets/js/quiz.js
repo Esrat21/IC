@@ -247,9 +247,7 @@ function getQuiz(){
     return $.ajax({
         method: "GET",
         url: "http://yanpegyn.000webhostapp.com/fase/0/quiz",
-        headers: { 'Content-Type': 'application/json' }
-        
-        
+        headers: { 'Content-Type': 'application/json' }      
     });
     /*.done(function(data){
        console.log(data);
