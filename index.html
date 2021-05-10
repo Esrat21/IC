@@ -2,20 +2,26 @@
 <html lang="en">
 
 <head>
-    <script src="assets/js/phaser.js"></script>
-    <script src="assets/js/jquery-3.5.1.min.js"></script>   
-    <link rel="manifest" href="manifest.json">
-    <title>IC</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="./script.js"></script>
+    <title>Jogos</title>
 </head>
 
 <body>
-    <div id='game'>
-        <script src="assets/js/menu.js"></script>
-        <script src="assets/js/gameOver.js"></script>
-        <script src="assets/js/level1.js"></script> 
-        <script src="assets/js/quiz.js"></script>
-        <script src="assets/js/index.js"></script>  
-        
+    <div class="navbar">
+
+    </div>
+    <div class="wrapper">
+        <div class="container">
+            <div class="games">
+                <button onclick="lvl1()" class="game">
+                    level1
+                </button>
+                <button onclick="lvl2()" class="game">
+                    level2
+                </button>
+            </div>
+        </div>
     </div>
 </body>
 
