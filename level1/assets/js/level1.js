@@ -23,7 +23,6 @@ var ckpy = 176;
 var zeppelin;
 var hp = [];
 var mortes = 0;
-var bats = [];
 var pltfrm;
 var canMove = true;
 var zpopup;
@@ -48,6 +47,10 @@ var quest,r1,r2,r3,r4;
 
 let vMortes = []
 let ob = [];
+
+//novo sistema de bolhas do dirigivel
+let bolhas;
+let liquido = [];
 
 
 function die() {
@@ -222,6 +225,10 @@ class Level1 extends Phaser.Scene {
         //load bat
         this.load.spritesheet('bat', './assets/images/enemies/Bat.png', { frameWidth: 16, frameHeight: 16 });
 
+        // load bubble and water sprites
+        this.load.image('bolha', './assets/images/ui/bubble.png');
+        this.load.image('agua', './assets/images/ui/liquid.png');
+
         //load player HP
         this.load.spritesheet('playerhp', './assets/images/ui/playerHp.png', { frameWidth: 16, frameHeight: 16 });
 
@@ -264,14 +271,12 @@ class Level1 extends Phaser.Scene {
         const spikeTop = map.createLayer("SpikeTop", tileset, 0, 0);
         const win = map.createLayer("Win", tileset, 0, 0);
         const wall = map.createLayer("parede", tileset, 0, 0);
-        const batLayer = map.createLayer("bats", tileset, 0, 0);
         const blocoVerde = map.createLayer("verde", tileset2, 0, 0);
 
         wall.setCollisionByProperty({ collides: true });
         floor.setCollisionByProperty({ collides: true });
         spikes.setCollisionByProperty({ collides: true });
         spikeTop.setCollisionByProperty({ collides: true });
-        batLayer.setCollisionByProperty({ collides: true });
         win.setCollisionByProperty({ collides: true });
 
         //Player    
@@ -409,7 +414,36 @@ class Level1 extends Phaser.Scene {
 
         pltfrm.add(zeppelin);
 
-        //console.log(pltfrm.getChildren());
+        ///////////////////////////////////////////////////////////// bolhas que sobem e descem ///////////////////////////////////////////
+
+        bolhas = this.physics.add.group()
+        let bolha = bolhas.create(1208, 136, 'bolha');
+        bolha.setImmovable(true);
+        bolha.setGravity(0,100);
+        bolha = bolhas.create(1272, 88, 'bolha');
+        bolha.setImmovable(true);
+        bolha.setGravity(0,100);
+        bolha = bolhas.create(1384, 136, 'bolha');
+        bolha.setImmovable(true);
+        bolha.setGravity(0,100);
+        bolha = bolhas.create(1448, 88, 'bolha');
+        bolha.setImmovable(true);
+        bolha.setGravity(0,100);
+        bolha = bolhas.create(1528, 88, 'bolha');
+        bolha.setImmovable(true);
+        bolha.setGravity(0,100);
+        bolha = bolhas.create(1640, 136, 'bolha');
+        bolha.setImmovable(true);
+        bolha.setGravity(0,100);
+
+        ///////////////////////////////////////////////////////////// liquido que emite as bolhas ////////////////////////////////////////////
+
+        let agua
+        
+        for(let i = 1016, j = 200;i<1729; i+=16){
+            agua = this.add.image(i,j,'agua')
+        }
+
 
         //
         var hp1 = this.add.sprite(8, 8, 'playerhp');
@@ -429,46 +463,6 @@ class Level1 extends Phaser.Scene {
         //console.log(this.sys.canvas.width / 2);
         placa = this.add.image(296, this.sys.canvas.height / 2, 'placa');
         placa.setScale(0.85, 0.5);
-
-        var txt = this.add.text(140, 6, "O elemento Hélio foi descoberto por Pierre - Jules -", { fontFamily: 'Arial', fontSize: 12, color: '#fff' });
-        texto.push(txt);
-        txt = this.add.text(140, 19, "César Janssen após observações do espectro de luz do", { fontFamily: 'Arial', fontSize: 12, color: '#fff' });
-        texto.push(txt);
-        txt = this.add.text(140, 32, "sol, o cientista percebeu a existência de um espectro", { fontFamily: 'Arial', fontSize: 12, color: '#fff' });
-        texto.push(txt);
-        txt = this.add.text(140, 45, "de luz que ainda não era conhecido na terra, chamando", { fontFamily: 'Arial', fontSize: 12, color: '#fff' });
-        texto.push(txt);
-        txt = this.add.text(140, 58, "então o novo elemento de Hélio, em referência a ", { fontFamily: 'Arial', fontSize: 12, color: '#fff' });
-        texto.push(txt);
-        txt = this.add.text(140, 71, "personificação divina do sol na mitologia grega, ocupa", { fontFamily: 'Arial', fontSize: 12, color: '#fff' });
-        texto.push(txt);
-        txt = this.add.text(140, 84, "a 2° posição na tabela periódica e é um gás nobre, ", { fontFamily: 'Arial', fontSize: 12, color: '#fff' });
-        texto.push(txt);
-        txt = this.add.text(140, 97, "possui uma densidade baixa em relação ao ar atmosférico,", { fontFamily: 'Arial', fontSize: 12, color: '#fff' });
-        texto.push(txt);
-        txt = this.add.text(140, 110, "sendo o segundo elemento mais abundante no universo,", { fontFamily: 'Arial', fontSize: 12, color: '#fff' });
-        texto.push(txt);
-        txt = this.add.text(140, 123, "logo após o Hidrogênio.", { fontFamily: 'Arial', fontSize: 12, color: '#fff' });
-        texto.push(txt);
-
-        placa.setVisible(false);
-        for (var i of texto) {
-            i.setVisible(false);
-        }
-
-        //bats
-        var morcego = this.physics.add.sprite(1208, 136, 'bat');
-        bats.push(morcego);
-        morcego = this.physics.add.sprite(1272, 88, 'bat');
-        bats.push(morcego);
-        morcego = this.physics.add.sprite(1384, 136, 'bat');
-        bats.push(morcego);
-        morcego = this.physics.add.sprite(1448, 88, 'bat');
-        bats.push(morcego);
-        morcego = this.physics.add.sprite(1528, 88, 'bat');
-        bats.push(morcego);
-        morcego = this.physics.add.sprite(1640, 136, 'bat');
-        bats.push(morcego);
 
         //game over e win -> devem ser as ultimas imagens adicionadas
         winimg = this.add.image(216, this.sys.canvas.height / 2, 'win');
@@ -509,10 +503,6 @@ class Level1 extends Phaser.Scene {
             jump = 1;
         });
 
-        this.physics.add.collider(player, batLayer, function() {
-            die();
-        });
-
         this.physics.add.collider(player, pltfrm, function() {
             jump = 1;
         });
@@ -522,6 +512,12 @@ class Level1 extends Phaser.Scene {
         });
 
         this.physics.add.overlap(player, coins,collectCoin);
+
+        this.physics.add.collider(bolhas, spikes, bubbleBounce);
+
+        this.physics.add.collider(player, bolhas, function(){
+            die();
+        })
 
         //Animations
         //Player
@@ -547,17 +543,6 @@ class Level1 extends Phaser.Scene {
             framerate: 10,
             repeat: 0
         });
-
-        this.anims.create({
-            key: 'batfly',
-            frames: this.anims.generateFrameNumbers('bat'),
-            framerate: 15,
-            repeat: -1
-        });
-
-        for (var i = 0; i < bats.length; i++) {
-            bats[i].play('batfly');
-        }
 
         this.anims.create({
             key: 'popup',
@@ -937,4 +922,8 @@ var collectCoin = function(player,coin){
    
     coin.destroy(coin.x, coin.y);
     scoreValue+=10;
+}
+
+var bubbleBounce = function(bolha){
+    bolha.setVelocityY(-150)
 }
