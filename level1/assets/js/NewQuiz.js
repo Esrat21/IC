@@ -9,7 +9,7 @@ let justf = [];
 class NewQuiz extends Phaser.Scene {
     constructor() {
         super({
-            key: 'NewQuiz',
+            key: 'newQuiz',
             active: false,
             visible: false
         })

@@ -777,7 +777,9 @@ class Level1 extends Phaser.Scene {
         }
 
         if (win) {
-            this.scene.start('quiz');
+            console.log("win")
+            //this.scene.start('quiz');
+            this.scene.start('newQuiz');
         }
         if(morreu){
             morreu = false;

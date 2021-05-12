@@ -237,8 +237,8 @@ class Quiz extends Phaser.Scene {
                     data_hora: hrFim,//Y-m-d H:i:s
                 })//
             }).done(function (data) {
-                idCerta = data["idAlternativaCorreta"];
-                if (ids[index] == idCerta) {
+
+                if (data["Correto"] == 1) {
 
                     texto.setText("ACERTOU");
                     dialog.setVisible(false);
