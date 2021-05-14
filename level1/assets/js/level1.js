@@ -51,6 +51,7 @@ let ob = [];
 //novo sistema de bolhas do dirigivel
 let bolhas;
 let liquido = [];
+let bubbles;
 
 
 function die() {
@@ -228,6 +229,7 @@ class Level1 extends Phaser.Scene {
         // load bubble and water sprites
         this.load.image('bolha', './assets/images/ui/bubble.png');
         this.load.image('agua', './assets/images/ui/liquid.png');
+        this.load.image('bolhas', './assets/images/ui/bolhas.png');
 
         //load player HP
         this.load.spritesheet('playerhp', './assets/images/ui/playerHp.png', { frameWidth: 16, frameHeight: 16 });
@@ -416,25 +418,30 @@ class Level1 extends Phaser.Scene {
 
         ///////////////////////////////////////////////////////////// bolhas que sobem e descem ///////////////////////////////////////////
 
-        bolhas = this.physics.add.group()
+        bolhas = this.physics.add.group();
         let bolha = bolhas.create(1208, 136, 'bolha');
         bolha.setImmovable(true);
         bolha.setGravity(0,100);
+        
         bolha = bolhas.create(1272, 88, 'bolha');
         bolha.setImmovable(true);
         bolha.setGravity(0,100);
+        
         bolha = bolhas.create(1384, 136, 'bolha');
         bolha.setImmovable(true);
         bolha.setGravity(0,100);
+        
         bolha = bolhas.create(1448, 88, 'bolha');
         bolha.setImmovable(true);
         bolha.setGravity(0,100);
+        
         bolha = bolhas.create(1528, 88, 'bolha');
         bolha.setImmovable(true);
         bolha.setGravity(0,100);
+        
         bolha = bolhas.create(1640, 136, 'bolha');
         bolha.setImmovable(true);
-        bolha.setGravity(0,100);
+        bolha.setGravity(0,100);        
 
         ///////////////////////////////////////////////////////////// liquido que emite as bolhas ////////////////////////////////////////////
 
@@ -443,6 +450,18 @@ class Level1 extends Phaser.Scene {
         for(let i = 1016, j = 200;i<1729; i+=16){
             agua = this.add.image(i,j,'agua')
         }
+        bubbles = this.add.image(1208,195,'bolhas')
+        bubbles = this.add.image(1272,195,'bolhas')
+        bubbles = this.add.image(1384,195,'bolhas')
+        bubbles = this.add.image(1448,195,'bolhas')
+        bubbles = this.add.image(1528,195,'bolhas')
+        bubbles = this.add.image(1640,195,'bolhas')
+        bubbles = this.add.image(1208,184,'bolhas')
+        bubbles = this.add.image(1272,184,'bolhas')
+        bubbles = this.add.image(1384,184,'bolhas')
+        bubbles = this.add.image(1448,184,'bolhas')
+        bubbles = this.add.image(1528,184,'bolhas')
+        bubbles = this.add.image(1640,184,'bolhas')
 
 
         //
