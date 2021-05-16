@@ -50,4 +50,4 @@ $.ajax({
     //window.location.replace("#");// ** colocar o endereço do roberto**
 }); 
 
-var game = new Phaser.Game(config);
+//var game = new Phaser.Game(config);

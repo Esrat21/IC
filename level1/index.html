@@ -2,9 +2,16 @@
 <html lang="en">
 
 <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+
     <script src="assets/js/phaser.js"></script>
-    <script src="assets/js/jquery-3.5.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
     <title>IC</title>
     <style>
         body {
@@ -25,57 +32,8 @@
             min-width: 100vw !important;
         }
 
-        .quizContainer,
-        .justif {
-            width: 95vw;
-            height: 90vh;
-            background-color: darkcyan;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            border-radius: 5%;
-            color: white;
-        }
-
-        .justif>div {
-            text-align: center;
-        }
-
-        #fade {
-            background-color: darkgreen;
-        }
-
-        .alt {
-            display: flex;
-            margin-top: 2vh;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .alt>div {
-            margin-top: 1vh;
-            margin-left: 1vw;
-            margin-right: 1vw;
-        }
-
-        .hover {
-            background-color: black;
-            width: 100%;
-            color: white;
-            display: flex;
-            flex-direction: column;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .show {
-            visibility: show;
-        }
-
-        .hide {
-            visibility: hidden;
+        a {
+            text-decoration: none;
         }
     </style>
 </head>
@@ -86,127 +44,71 @@
         <script src="assets/js/menu.js"></script>
         <script src="assets/js/gameOver.js"></script>
         <script src="assets/js/level1.js"></script>
-        <!-- <script src="assets/js/quiz.js"></script> -->
-        <script src="assets/js/NewQuiz.js"></script>
+        <script src="assets/js/newQuiz.js"></script>
         <script src="assets/js/index.js"></script>
 
     </div>
 
-    <div id="quiz">
-        <div class="quizContainer">
-            <div class="quizQuestion">
-                <h3> {{ titulo }} </h3>
-            </div>
-            <div class="alt">
-                <div id="div1" @mouseover="hover(alternativas[0],'div1')" @mouseleave="leave('div1')"
-                    @click="check(ids[0])">
-                    {{alternativas[0]}}
-                </div>
-                <div id="div2" @mouseover="hover(alternativas[1],'div2')" @mouseleave="leave('div2')"
-                    @click="check(ids[1])">
-                    {{alternativas[1]}}
-                </div>
-                <div id="div3" @mouseover="hover(alternativas[2],'div3')" @mouseleave="leave('div3')"
-                    @click="check(ids[2])">
-                    {{alternativas[2]}}
-                </div>
-                <div id="div4" @mouseover="hover(alternativas[3],'div4')" @mouseleave="leave('div4')"
-                    @click="check(ids[3])">
-                    {{alternativas[3]}}
-                </div>
-            </div>
-            <button onclick="updateData()" style="margin-top: 2vh;">updateData</button>
+    <div class="container justify-content-center rounded" id="quiz"
+        style="background: lightgray; min-height: 100%;">
+        &nbsp;
+        <div class="col text-center" id="title" style="">
+
         </div>
-
-        <div class="justif">
-            justif
-            <p>status: {{status}}</p>
-            <button @click="retornar()"> retornar </button>
-
-            <div id="div1">
-                <p>alt: {{alternativas[0]}}</p>
-                <p>justif: {{justificativas[0]}}</p>
+        <div class="col overflow-hidden" id="div" style="">
+            <div class="col text-center rounded" id="alt1" style="">
 
             </div>
-            <div id="div2">
-                <p>alt: {{alternativas[1]}}</p>
-                <p>justif: {{justificativas[1]}}</p>
-            </div>
-            <div id="div3">
-                <p>alt: {{alternativas[2]}}</p>
-                <p>justif: {{justificativas[2]}}</p>
-            </div>
-            <div id="div4">
-                <p>alt: {{alternativas[3]}}</p>
-                <p>justif: {{justificativas[3]}}</p>
-            </div>
+            <div class="col text-center" style="margin-top: 2vh;" id="alt2">
 
+            </div>
+            <div class="col text-center" style="margin-top: 2vh;" id="alt3">
+
+            </div>
+            <div class="col text-center" style="margin-top: 2vh;" id="alt4">
+
+            </div>
         </div>
     </div>
 
     <script>
-        var app = new Vue({
-            el: '#quiz',
-            data: {
-                titulo: 'nome',
-                alternativas: ['', '', '', ''],
-                ids: [0, 0, 0, 0],
-                certa: 0,
-                quizId: 0,
-                justificativas: ['', '', '', ''],
-                status: ''
-            },
-            methods: {
-                hover(el, div) {
-                    $('#' + div).toggleClass('hover')
-                },
-                leave(div) {
-                    $('#' + div).removeClass('hover')
-                },
-                check(id) {
-                    respondeQuiz(id)
-                },
-                retornar() {
-                    console.log('reload')
-                }
-            }
-        })
+        $('#quiz').hide()
 
-        $('#quiz').hide();
-        $('.justif').hide();
+        let titulo, alternativas = [], ids = [], just = [], quizId;
 
         function getQuiz() {
-            return $.ajax({
+            $.ajax({
                 method: "GET",
                 url: `https://apichemical.quimicotgames.com/aluno/turmas/fases/${turmaFase}/quiz`,
                 headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${tokenAluno}` }
+            }).done(function (data) {
+                let sss = "";
+                titulo = data["pergunta"];
+                quizId = data["quiz_id"];
+                ss = data["alternativas"];
+                alternativas = [];
+                ids = [];
+
+                let i = 0;
+                for (let alt in ss) {
+                    let element = ss[alt]
+                    ids[i] = element["id"];
+                    alternativas[i] = element["descricao"];
+                    i++;
+                }
+
+                let divs = $('#div').children();
+                for (let i = 0; i < 4; i++) {
+                    $(`#${divs[i].id}`).append(`<a href="#" onclick="respondeQuiz(${ids[i]})">${alternativas[i]}</a>`)
+                }
+                $('#title').append(`${titulo}`)
+                $(`#title`).append(`<br><br>`)
+
             })
         }
 
         let data;
         let quiz = getQuiz();
-
-        function updateData() {
-            //console.log(quiz)
-            data = quiz.responseJSON;
-            //console.log(data);
-
-            let sss = "";
-            app.titulo = data["pergunta"];
-            app.quizId = data["quiz_id"];
-            ss = data["alternativas"];
-            //console.log(ss[0])
-            app.alternativas = [];
-            app.ids = [];
-
-            let i = 0;
-            for (let alt in ss) {
-                let element = ss[alt]
-                app.ids[i] = element["id"];
-                app.alternativas[i] = element["descricao"];
-                i++;
-            }
-        }
 
         function respondeQuiz(id) {
             let hrFim = horaFinal();
@@ -217,33 +119,44 @@
                 headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${tokenAluno}` },
                 data: JSON.stringify({
                     turma_fase: turmaFase,
-                    quiz: app.quizId,
+                    quiz: quizId,
                     escolha: id,
                     data_hora: hrFim,//Y-m-d H:i:s
                 })//
             })
                 .done(function (data) {
-
-                    $(".quizContainer").hide()
-                    $('.justif').show();
-
-                    data = Object.values(data)
-                    //console.log(data)
-                    let correto = data[0];
+                    console.log(data)
+                    let correto = data["Correto"];
+                    console.log(correto)
                     if (correto) {
-                        app.status = "ACERTOU"
+                        status = "ACERTOU"
                     } else {
-                        app.status = "ERROU"
+                        status = "ERROU"
                     }
 
-                    let arr = Object.values(data[2])
-                    //console.log(arr)
+                    let arr = data['alternativasJustificadas']
+                    console.log(arr)
+
+                    let divs = $('#div').children();
+                    $(`#title`).empty().append(`${status}`)
+                    $(`#title`).append(`<br><br>`)
+                    $(`#title`).append(`Justificativas`)
+
                     for (let i = 0; i < 4; i++) {
-                        let alt = Object.values(arr[i]);
-                        app.justificativas[i] = alt[4]
+                        let alt = arr[i].descricao;
+                        $(`#${divs[i].id}`).empty().append(`${alt}`)
+                        if (arr[i].alt_correta) {
+                            $(`#${divs[i].id}`).css({ "background": "#00FF00" })
+                        } else {
+                            $(`#${divs[i].id}`).css({ "background": "#FF0000" })
+                        }
+
                     }
+                    $('div').append("<br>")
+                    $('#div').append(`<div class="col"><form action="http://quimicotgames.com/WEB/IC_GerenciaDeAlunos/public_html"><button class="btn btn-primary" type="submit">voltar</button></form></div>`)
                 })
         }
+
         function horaFinal() {
             hrFim = new Date();
             let h = hrFim.toISOString();
@@ -259,6 +172,7 @@
             hrFim = h;
             return hrFim;
         }
+
     </script>
 </body>
 
