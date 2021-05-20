@@ -25,7 +25,7 @@ var hp = [];
 var mortes = 0;
 var pltfrm;
 var canMove = true;
-var zpopup;
+var zpopup, zpopup2;
 var winimg;
 var dieimg;
 var morreu = false;
@@ -42,8 +42,10 @@ var upKeyDown
 var downKeyDown
 
 var content = `O elemento Hélio foi descoberto por Pierre - Jules - César Janssen após observações do espectro de luz do sol, o cientista percebeu a existência de um espectro de luz que ainda não era conhecido na terra, chamando então o novo elemento de Hélio, em referência a personificação divina do sol na mitologia grega, ocupa a 2° posição na tabela periódica e é um gás nobre, possui uma densidade baixa em relação ao ar atmosférico, sendo o segundo elemento mais abundante no universo, logo após o Hidrogênio.`;
+var content2 = `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam vel faucibus eros. Mauris eros velit, laoreet in semper sed, efficitur cursus mauris. Nunc tincidunt, dui vulputate suscipit convallis, leo magna interdum ligula, vitae porttitor sem lorem eget urna. Fusce aliquam fringilla nunc at placerat. Suspendisse sagittis diam quis eros semper, non suscipit leo commodo. Sed eget orci ex. Curabitur eleifend eu risus vel cursus. Proin vel faucibus sapien. Sed malesuada non neque et elementum.`
 
-var quest,r1,r2,r3,r4;
+
+var quest, r1, r2, r3, r4;
 
 let vMortes = []
 let ob = [];
@@ -56,42 +58,42 @@ let bubbles;
 
 function die() {
     //console.log("Tile X: " + parseInt(player.x / 16) + "\nTile Y: " + parseInt(player.y / 16));
-    
+
     let px = player.x;
     let py = player.y;
 
-    let obstaculos = ["baloes","airship"];
-    if(px>370 && px<670){
+    let obstaculos = ["baloes", "airship"];
+    if (px > 370 && px < 670) {
         ob.push(obstaculos[0]);
-    }else if(px>1000 && px<1745){
+    } else if (px > 1000 && px < 1745) {
         ob.push(obstaculos[1]);
     }
 
     player.x = ckpx;
     player.y = ckpy;
-    
+
     if (mortes == 0) {
         hp[0].play('death');
-        vMortes[0] = [px,py]
+        vMortes[0] = [px, py]
 
     } else if (mortes == 1) {
         hp[1].play('death');
-        vMortes[1] = [px,py]
+        vMortes[1] = [px, py]
 
     } else if (mortes == 2) {
         hp[2].play('death');
-        vMortes[2] = [px,py]
+        vMortes[2] = [px, py]
 
         //formatando hora da morte
         hrFim = new Date();
-        let h = hrFim.toISOString();  
+        let h = hrFim.toISOString();
         let hh = [];
         hh = h.split("T");
         let hh2 = [];
         hh2 = hh[1].split(".")
         h = hh[0] + " " + hh2[0];
-        h = h.replace("-","/");
-        h = h.replace("-","/");
+        h = h.replace("-", "/");
+        h = h.replace("-", "/");
         hrFim = h;
 
         console.log("h': " + hrFim);
@@ -99,28 +101,28 @@ function die() {
         $.ajax({
             method: "POST",
             url: "apichemical.quimicotgames.com/aluno/log",
-            headers: { 'Content-Type': 'application/json','Authorization': `Bearer ${tokenAluno}` },
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${tokenAluno}` },
             data: JSON.stringify({
                 turma_fase: turmaFase,//
                 detalhes: "morreu nas coordenadas x: " + px + ", y: " + py,
                 tipo: "morte",
-                comeco: hrInicio ,//Y-m-d H:i:s
-                fim: hrFim ,//Y-m-d H:i:s
+                comeco: hrInicio,//Y-m-d H:i:s
+                fim: hrFim,//Y-m-d H:i:s
                 objeto: JSON.stringify({
                     obstaculos: ob,
                     coordenadas: vMortes
                 }),
             })
         })
-        .done(function(){
-           morreu = true;
-           //this.scene.start('gameOver');
-        })
-        .fail(function(jqXHR, textStatus, msg){
-            console.log(msg);
-            morreu = true;
-            //this.scene.start('gameOver');
-        });
+            .done(function () {
+                morreu = true;
+                //this.scene.start('gameOver');
+            })
+            .fail(function (jqXHR, textStatus, msg) {
+                console.log(msg);
+                morreu = true;
+                //this.scene.start('gameOver');
+            });
         //this.scene.start('gameOver');
     }
 
@@ -165,7 +167,7 @@ class Level1 extends Phaser.Scene {
         })
     }
 
-    init(){
+    init() {
         morreu = false;
     }
 
@@ -264,7 +266,7 @@ class Level1 extends Phaser.Scene {
 
         const map = this.make.tilemap({ key: "map" });
         const tileset = map.addTilesetImage("DirtBrick_Assets_V4", "tiles", 16, 16);
-        const tileset2 = map.addTilesetImage("bloco_verde", "tiles2",16,16);
+        const tileset2 = map.addTilesetImage("bloco_verde", "tiles2", 16, 16);
 
         //map layers
         const floor = map.createLayer("Floor", tileset, 0, 0);
@@ -292,22 +294,22 @@ class Level1 extends Phaser.Scene {
         ckpy = 176;
 
         //score
-        score = this.add.text(350, 1, "Score: " + scoreValue, {fontSize: 12, color: '#fff' });
+        score = this.add.text(350, 1, "Score: " + scoreValue, { fontSize: 12, color: '#fff' });
         score.setScrollFactor(0);
 
         //gold coins
 
-        let arrX = [9,11,17,32,48,60,74,82,97,114];
-        let arrY = [10,10,9,5,10,7,6,4,7,6];
+        let arrX = [9, 11, 17, 32, 48, 60, 74, 82, 97, 114];
+        let arrY = [10, 10, 9, 5, 10, 7, 6, 4, 7, 6];
 
         coinSound = this.sound.add('coinSound');
         coinSound.setVolume(0.25);
 
         coins = this.physics.add.group();
 
-        for(let i =0;i<10;i++){
-            coin = this.physics.add.sprite((arrX[i]*16)+8,(arrY[i]*16)+8,'coin1');
-            coin.setScale(0.25,0.25)
+        for (let i = 0; i < 10; i++) {
+            coin = this.physics.add.sprite((arrX[i] * 16) + 8, (arrY[i] * 16) + 8, 'coin1');
+            coin.setScale(0.25, 0.25)
             coins.add(coin);
         }
 
@@ -421,47 +423,47 @@ class Level1 extends Phaser.Scene {
         bolhas = this.physics.add.group();
         let bolha = bolhas.create(1208, 136, 'bolha');
         bolha.setImmovable(true);
-        bolha.setGravity(0,100);
-        
+        bolha.setGravity(0, 100);
+
         bolha = bolhas.create(1272, 88, 'bolha');
         bolha.setImmovable(true);
-        bolha.setGravity(0,100);
-        
+        bolha.setGravity(0, 100);
+
         bolha = bolhas.create(1384, 136, 'bolha');
         bolha.setImmovable(true);
-        bolha.setGravity(0,100);
-        
+        bolha.setGravity(0, 100);
+
         bolha = bolhas.create(1448, 88, 'bolha');
         bolha.setImmovable(true);
-        bolha.setGravity(0,100);
-        
+        bolha.setGravity(0, 100);
+
         bolha = bolhas.create(1528, 88, 'bolha');
         bolha.setImmovable(true);
-        bolha.setGravity(0,100);
-        
+        bolha.setGravity(0, 100);
+
         bolha = bolhas.create(1640, 136, 'bolha');
         bolha.setImmovable(true);
-        bolha.setGravity(0,100);        
+        bolha.setGravity(0, 100);
 
         ///////////////////////////////////////////////////////////// liquido que emite as bolhas ////////////////////////////////////////////
 
         let agua
-        
-        for(let i = 1016, j = 200;i<1729; i+=16){
-            agua = this.add.image(i,j,'agua')
+
+        for (let i = 1016, j = 200; i < 1729; i += 16) {
+            agua = this.add.image(i, j, 'agua')
         }
-        bubbles = this.add.image(1208,195,'bolhas')
-        bubbles = this.add.image(1272,195,'bolhas')
-        bubbles = this.add.image(1384,195,'bolhas')
-        bubbles = this.add.image(1448,195,'bolhas')
-        bubbles = this.add.image(1528,195,'bolhas')
-        bubbles = this.add.image(1640,195,'bolhas')
-        bubbles = this.add.image(1208,184,'bolhas')
-        bubbles = this.add.image(1272,184,'bolhas')
-        bubbles = this.add.image(1384,184,'bolhas')
-        bubbles = this.add.image(1448,184,'bolhas')
-        bubbles = this.add.image(1528,184,'bolhas')
-        bubbles = this.add.image(1640,184,'bolhas')
+        bubbles = this.add.image(1208, 195, 'bolhas')
+        bubbles = this.add.image(1272, 195, 'bolhas')
+        bubbles = this.add.image(1384, 195, 'bolhas')
+        bubbles = this.add.image(1448, 195, 'bolhas')
+        bubbles = this.add.image(1528, 195, 'bolhas')
+        bubbles = this.add.image(1640, 195, 'bolhas')
+        bubbles = this.add.image(1208, 184, 'bolhas')
+        bubbles = this.add.image(1272, 184, 'bolhas')
+        bubbles = this.add.image(1384, 184, 'bolhas')
+        bubbles = this.add.image(1448, 184, 'bolhas')
+        bubbles = this.add.image(1528, 184, 'bolhas')
+        bubbles = this.add.image(1640, 184, 'bolhas')
 
 
         //
@@ -479,6 +481,9 @@ class Level1 extends Phaser.Scene {
         zpopup = this.add.sprite(296, 144, 'zpopup');
         zpopup.setScale(0.5, 0.5);
 
+        zpopup2 = this.add.sprite(888, 144, 'zpopup');
+        zpopup2.setScale(0.5, 0.5);
+
         //console.log(this.sys.canvas.width / 2);
         placa = this.add.image(296, this.sys.canvas.height / 2, 'placa');
         placa.setScale(0.85, 0.5);
@@ -488,53 +493,53 @@ class Level1 extends Phaser.Scene {
         winimg.setVisible(false);
 
         //Colliders
-        this.physics.add.collider(player, floor, function() {
+        this.physics.add.collider(player, floor, function () {
             jump = 1;
         });
         this.physics.add.collider(player, wall);
-        this.physics.add.collider(player, spikes, function() {
+        this.physics.add.collider(player, spikes, function () {
             die();
         });
-        this.physics.add.collider(player, win, function() {
+        this.physics.add.collider(player, win, function () {
             won();
         });
 
-        this.physics.add.collider(baloes1, spikeTop, function(baloes1) {
+        this.physics.add.collider(baloes1, spikeTop, function (baloes1) {
             baloes1.y = 216;
             baloes1.setVelocityY(-50);
         });
-        this.physics.add.collider(baloes2, spikeTop, function(baloes2) {
+        this.physics.add.collider(baloes2, spikeTop, function (baloes2) {
             baloes2.y = 216;
             baloes2.setVelocityY(-75);
         });
-        this.physics.add.collider(baloes3, spikeTop, function(baloes3) {
+        this.physics.add.collider(baloes3, spikeTop, function (baloes3) {
             baloes3.y = 216;
             baloes3.setVelocityY(-100);
         });
 
-        this.physics.add.collider(player, baloes1, function() {
+        this.physics.add.collider(player, baloes1, function () {
             jump = 1;
         });
-        this.physics.add.collider(player, baloes2, function() {
+        this.physics.add.collider(player, baloes2, function () {
             jump = 1;
         });
-        this.physics.add.collider(player, baloes3, function() {
-            jump = 1;
-        });
-
-        this.physics.add.collider(player, pltfrm, function() {
+        this.physics.add.collider(player, baloes3, function () {
             jump = 1;
         });
 
-        this.physics.add.collider(player, win, function() {
+        this.physics.add.collider(player, pltfrm, function () {
+            jump = 1;
+        });
+
+        this.physics.add.collider(player, win, function () {
             win();
         });
 
-        this.physics.add.overlap(player, coins,collectCoin);
+        this.physics.add.overlap(player, coins, collectCoin);
 
         this.physics.add.collider(bolhas, spikes, bubbleBounce);
 
-        this.physics.add.collider(player, bolhas, function(){
+        this.physics.add.collider(player, bolhas, function () {
             die();
         })
 
@@ -571,31 +576,33 @@ class Level1 extends Phaser.Scene {
         });
         zpopup.play('popup');
         zpopup.setVisible(false);
+        zpopup2.play('popup');
+        zpopup2.setVisible(false);
 
         this.anims.create({
             key: 'coinFlip',
-            frames:[
-                {key:'coin1'},
-                {key:'coin2'},
-                {key:'coin3'},
-                {key:'coin4'},
-                {key:'coin5'},
-                {key:'coin6'}
+            frames: [
+                { key: 'coin1' },
+                { key: 'coin2' },
+                { key: 'coin3' },
+                { key: 'coin4' },
+                { key: 'coin5' },
+                { key: 'coin6' }
             ],
             framerate: 15,
             repeat: -1
         })
         let coinnss = coins.getChildren();
 
-        for(let i in coinnss){
+        for (let i in coinnss) {
             coinnss[i].play('coinFlip');
         }
         //Entradas do teclado
 
         //joystick
         var toast = this.rexUI.add.toast({
-            x:200,
-            y:200,
+            x: 200,
+            y: 200,
             background: this.rexUI.add.roundRectangle(0, 0, 2, 2, 20, 0x888888),
             text: this.add.text(0, 0, '', {
                 fontSize: '16px'
@@ -616,7 +623,7 @@ class Level1 extends Phaser.Scene {
 
         toast.setScrollFactor(0);
 
-        if(this.sys.game.device.os.android == true || this.sys.game.device.os.iOS == true){
+        if (this.sys.game.device.os.android == true || this.sys.game.device.os.iOS == true) {
             this.scale.startFullscreen();
             this.scale.lockOrientation('landscape-primary');
 
@@ -630,7 +637,7 @@ class Level1 extends Phaser.Scene {
                 // forceMin: 16,
                 // enable: true
             })
-            .on('update', this.dumpJoyStickState, this);
+                .on('update', this.dumpJoyStickState, this);
 
             this.text = this.add.text(0, 0);
             this.dumpJoyStickState();
@@ -639,52 +646,52 @@ class Level1 extends Phaser.Scene {
             //botao pular
             var expand = true;
             var buttons = this.rexUI.add.buttons({
-                    x: 355,
-                    y: 200,
-                    width: 20,
-                    orientation: 'x',
+                x: 355,
+                y: 200,
+                width: 20,
+                orientation: 'x',
 
-                    buttons: [
-                        createButton2(this, '^'),
-                        createButton2(this,'Z'),
-                        createButton2(this,'Som')
-                    ],
-                    expand: expand
-                })
+                buttons: [
+                    createButton2(this, '^'),
+                    createButton2(this, 'Z'),
+                    createButton2(this, 'Som')
+                ],
+                expand: expand
+            })
                 .layout()
             buttons
-                .on('button.click', function(button, index, pointer, event) {
+                .on('button.click', function (button, index, pointer, event) {
                     if (jump == 1 && index == 0) {
                         jump = 0;
                         player.body.setVelocity(player.body.velocity.x, player.body.velocity.y - 100);
-                    }else if(index == 1){
+                    } else if (index == 1) {
                         activebox = 1;
-                    }else if(index == 2){
-                        if(activeSound == 0){
+                    } else if (index == 2) {
+                        if (activeSound == 0) {
                             activeSound = 1;
                             toast.show('som ativado');
                             console.log('ativo');
-                        }else if(activeSound == 1){
+                        } else if (activeSound == 1) {
                             activeSound = 0;
                             toast.show('som desativado');
                             console.log('inativo');
                         }
-                       
+
                     }
                 })
-                .on('button.over', function(button, groupName, index, pointer, event) {
+                .on('button.over', function (button, groupName, index, pointer, event) {
                     //button.getElement('background').setStrokeStyle(1, 0xffffff);
                 })
-                .on('button.out', function(button, groupName, index, pointer, event) {
+                .on('button.out', function (button, groupName, index, pointer, event) {
                     //button.getElement('background').setStrokeStyle();
                 });
-                
-            buttons.setScrollFactor(0);     
+
+            buttons.setScrollFactor(0);
         }
 
         //movimentação do player
         var space = this.input.keyboard.addKey('SPACE');
-        space.on('down', function(event) {
+        space.on('down', function (event) {
             if (jump == 1) {
                 jump = 0;
                 player.body.setVelocity(player.body.velocity.x, player.body.velocity.y - 100);
@@ -693,11 +700,11 @@ class Level1 extends Phaser.Scene {
 
         //placa
         var keyz = this.input.keyboard.addKey('Z');
-        keyz.on('down', function(event) {
+        keyz.on('down', function (event) {
             if (canMove) {
-                          
+
             }
-        });        
+        });
 
         a = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
         d = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
@@ -719,14 +726,26 @@ class Level1 extends Phaser.Scene {
         score.setText("Score:" + scoreValue);
 
         if (player.x > 272 && player.x < 330) {
-            if(canMove && (z.isDown || activebox==1)){
+            if (canMove && (z.isDown || activebox == 1)) {
                 canMove = false;
-                createTextBox(this, player.x-130, 100, {
+                createTextBox(this, player.x - 130, 100, {
                     wrapWidth: 200,
                     fixedWidth: 190,
                     fixedHeight: 45,
                 })
-                .start(content, 50); 
+                    .start(content, 50);
+            }
+        }
+
+        if (player.x > 850 && player.x < 950) {
+            if (canMove && (z.isDown || activebox == 1)) {
+                canMove = false;
+                createTextBox(this, player.x - 130, 100, {
+                    wrapWidth: 200,
+                    fixedWidth: 190,
+                    fixedHeight: 45,
+                })
+                    .start(content2, 50);
             }
         }
 
@@ -795,23 +814,29 @@ class Level1 extends Phaser.Scene {
             zpopup.setVisible(false);
         }
 
+        if ((player.x > 850 && player.x < 950)) {
+            zpopup2.setVisible(true);
+        } else {
+            zpopup2.setVisible(false);
+        }
+
         if (win) {
             console.log("win")
             //this.scene.start('quiz');
             this.scene.start('newQuiz');
         }
-        if(morreu){
+        if (morreu) {
             morreu = false;
             //alert(morreu)
             //this.scene.pause();
             //this.scene.start('gameOver');  
-            location.reload();          
+            location.reload();
         }
 
         //console.log(player.x)
 
     }
-    
+
     dumpJoyStickState() {
         var cursorKeys = this.joyStick.createCursorKeys();
         var s = 'Key down: ';
@@ -829,39 +854,39 @@ class Level1 extends Phaser.Scene {
 }
 
 const GetValue = Phaser.Utils.Objects.GetValue;
-var createTextBox = function(scene, x, y, config) {
+var createTextBox = function (scene, x, y, config) {
     var wrapWidth = GetValue(config, 'wrapWidth', 0);
     var fixedWidth = GetValue(config, 'fixedWidth', 0);
     var fixedHeight = GetValue(config, 'fixedHeight', 0);
     var textBox = scene.rexUI.add.textBox({
-            x: x,
-            y: y,
+        x: x,
+        y: y,
 
-            background: scene.rexUI.add.roundRectangle(0, 0, 2, 2, 20, COLOR_PRIMARY)
-                .setStrokeStyle(2, COLOR_LIGHT),
+        background: scene.rexUI.add.roundRectangle(0, 0, 2, 2, 20, COLOR_PRIMARY)
+            .setStrokeStyle(2, COLOR_LIGHT),
 
-            icon: scene.rexUI.add.roundRectangle(0, 0, 2, 2, 20, COLOR_DARK),
+        icon: scene.rexUI.add.roundRectangle(0, 0, 2, 2, 20, COLOR_DARK),
 
-            // text: getBuiltInText(scene, wrapWidth, fixedWidth, fixedHeight),
-            text: getBBcodeText(scene, wrapWidth, fixedWidth, fixedHeight),
+        // text: getBuiltInText(scene, wrapWidth, fixedWidth, fixedHeight),
+        text: getBBcodeText(scene, wrapWidth, fixedWidth, fixedHeight),
 
-            action: scene.add.image(0, 0, 'nextPage').setTint(COLOR_LIGHT).setVisible(false),
+        action: scene.add.image(0, 0, 'nextPage').setTint(COLOR_LIGHT).setVisible(false),
 
-            space: {
-                left: 20,
-                right: 20,
-                top: 20,
-                bottom: 20,
-                icon: 10,
-                text: 10,
-            }
-        })
+        space: {
+            left: 20,
+            right: 20,
+            top: 20,
+            bottom: 20,
+            icon: 10,
+            text: 10,
+        }
+    })
         .setOrigin(0)
         .layout();
 
     textBox
         .setInteractive()
-        .on('pointerdown', function() {
+        .on('pointerdown', function () {
             var icon = this.getElement('action').setVisible(false);
             this.resetChildVisibleState(icon);
             if (this.isTyping) {
@@ -870,7 +895,7 @@ var createTextBox = function(scene, x, y, config) {
                 this.typeNextPage();
             }
         }, textBox)
-        .on('pageend', function() {
+        .on('pageend', function () {
             if (this.isLastPage) {
                 canMove = true;
                 activebox = 0;
@@ -889,24 +914,24 @@ var createTextBox = function(scene, x, y, config) {
                 yoyo: false
             });
         }, textBox)
-        //.on('type', function () {
-        //})
+    //.on('type', function () {
+    //})
 
     return textBox;
 }
 
-var getBuiltInText = function(scene, wrapWidth, fixedWidth, fixedHeight) {
+var getBuiltInText = function (scene, wrapWidth, fixedWidth, fixedHeight) {
     return scene.add.text(0, 0, '', {
-            fontSize: '15px',
-            wordWrap: {
-                width: wrapWidth
-            },
-            maxLines: 3
-        })
+        fontSize: '15px',
+        wordWrap: {
+            width: wrapWidth
+        },
+        maxLines: 3
+    })
         .setFixedSize(fixedWidth, fixedHeight);
 }
 
-var getBBcodeText = function(scene, wrapWidth, fixedWidth, fixedHeight) {
+var getBBcodeText = function (scene, wrapWidth, fixedWidth, fixedHeight) {
     return scene.rexUI.add.BBCodeText(0, 0, '', {
         fixedWidth: fixedWidth,
         fixedHeight: fixedHeight,
@@ -920,7 +945,7 @@ var getBBcodeText = function(scene, wrapWidth, fixedWidth, fixedHeight) {
     })
 }
 
-var createButton2 = function(scene, text) {
+var createButton2 = function (scene, text) {
     return scene.rexUI.add.label({
         width: 20,
         height: 20,
@@ -936,15 +961,15 @@ var createButton2 = function(scene, text) {
     });
 }
 
-var collectCoin = function(player,coin){
-    if(activeSound == 1){
+var collectCoin = function (player, coin) {
+    if (activeSound == 1) {
         coinSound.play();
     }
-   
+
     coin.destroy(coin.x, coin.y);
-    scoreValue+=10;
+    scoreValue += 10;
 }
 
-var bubbleBounce = function(bolha){
+var bubbleBounce = function (bolha) {
     bolha.setVelocityY(-150)
 }
