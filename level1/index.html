@@ -32,8 +32,9 @@
             min-width: 100vw !important;
         }
 
-        a {
-            text-decoration: none;
+        button {
+            width: 100%;
+            background: #DEDEDE;
         }
     </style>
 </head>
@@ -99,7 +100,7 @@
 
                 let divs = $('#div').children();
                 for (let i = 0; i < 4; i++) {
-                    $(`#${divs[i].id}`).append(`<a href="#" onclick="respondeQuiz(${ids[i]})">${alternativas[i]}</a>`)
+                    $(`#${divs[i].id}`).append(`<button class="btn" onclick="respondeQuiz(${ids[i]})">${alternativas[i]}</abutton>`)
                 }
                 $('#title').append(`${titulo}`)
                 $(`#title`).append(`<br><br>`)
