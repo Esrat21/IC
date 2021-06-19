@@ -99,26 +99,26 @@ function die() {
         console.log("h': " + hrFim);
         //
         $.ajax({
-            method: "POST",
-            url: "apichemical.quimicotgames.com/aluno/log",
-            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${tokenAluno}` },
-            data: JSON.stringify({
-                turma_fase: turmaFase,//
-                detalhes: "morreu nas coordenadas x: " + px + ", y: " + py,
-                tipo: "morte",
-                comeco: hrInicio,//Y-m-d H:i:s
-                fim: hrFim,//Y-m-d H:i:s
-                objeto: JSON.stringify({
-                    obstaculos: ob,
-                    coordenadas: vMortes
-                }),
+                method: "POST",
+                url: "apichemical.quimicotgames.com/aluno/log",
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${tokenAluno}` },
+                data: JSON.stringify({
+                    turma_fase: turmaFase, //
+                    detalhes: "morreu nas coordenadas x: " + px + ", y: " + py,
+                    tipo: "morte",
+                    comeco: hrInicio, //Y-m-d H:i:s
+                    fim: hrFim, //Y-m-d H:i:s
+                    objeto: JSON.stringify({
+                        obstaculos: ob,
+                        coordenadas: vMortes
+                    }),
+                })
             })
-        })
-            .done(function () {
+            .done(function() {
                 morreu = true;
                 //this.scene.start('gameOver');
             })
-            .fail(function (jqXHR, textStatus, msg) {
+            .fail(function(jqXHR, textStatus, msg) {
                 console.log(msg);
                 morreu = true;
                 //this.scene.start('gameOver');
@@ -493,45 +493,45 @@ class Level1 extends Phaser.Scene {
         winimg.setVisible(false);
 
         //Colliders
-        this.physics.add.collider(player, floor, function () {
+        this.physics.add.collider(player, floor, function() {
             jump = 1;
         });
         this.physics.add.collider(player, wall);
-        this.physics.add.collider(player, spikes, function () {
+        this.physics.add.collider(player, spikes, function() {
             die();
         });
-        this.physics.add.collider(player, win, function () {
+        this.physics.add.collider(player, win, function() {
             won();
         });
 
-        this.physics.add.collider(baloes1, spikeTop, function (baloes1) {
+        this.physics.add.collider(baloes1, spikeTop, function(baloes1) {
             baloes1.y = 216;
             baloes1.setVelocityY(-50);
         });
-        this.physics.add.collider(baloes2, spikeTop, function (baloes2) {
+        this.physics.add.collider(baloes2, spikeTop, function(baloes2) {
             baloes2.y = 216;
             baloes2.setVelocityY(-75);
         });
-        this.physics.add.collider(baloes3, spikeTop, function (baloes3) {
+        this.physics.add.collider(baloes3, spikeTop, function(baloes3) {
             baloes3.y = 216;
             baloes3.setVelocityY(-100);
         });
 
-        this.physics.add.collider(player, baloes1, function () {
+        this.physics.add.collider(player, baloes1, function() {
             jump = 1;
         });
-        this.physics.add.collider(player, baloes2, function () {
+        this.physics.add.collider(player, baloes2, function() {
             jump = 1;
         });
-        this.physics.add.collider(player, baloes3, function () {
-            jump = 1;
-        });
-
-        this.physics.add.collider(player, pltfrm, function () {
+        this.physics.add.collider(player, baloes3, function() {
             jump = 1;
         });
 
-        this.physics.add.collider(player, win, function () {
+        this.physics.add.collider(player, pltfrm, function() {
+            jump = 1;
+        });
+
+        this.physics.add.collider(player, win, function() {
             win();
         });
 
@@ -539,7 +539,7 @@ class Level1 extends Phaser.Scene {
 
         this.physics.add.collider(bolhas, spikes, bubbleBounce);
 
-        this.physics.add.collider(player, bolhas, function () {
+        this.physics.add.collider(player, bolhas, function() {
             die();
         })
 
@@ -614,8 +614,7 @@ class Level1 extends Phaser.Scene {
                 bottom: 20,
             },
 
-            duration: {
-                in: 250,
+            duration: { in: 250,
                 hold: 1000,
                 out: 250,
             },
@@ -628,15 +627,15 @@ class Level1 extends Phaser.Scene {
             this.scale.lockOrientation('landscape-primary');
 
             this.joyStick = this.plugins.get('rexvirtualjoystickplugin').add(this, {
-                x: 48,
-                y: 170,
-                radius: 20,
-                base: this.add.circle(0, 0, 40, 0x888888),
-                thumb: this.add.circle(0, 0, 20, 0xcccccc),
-                // dir: '8dir',   // 'up&down'|0|'left&right'|1|'4dir'|2|'8dir'|3
-                // forceMin: 16,
-                // enable: true
-            })
+                    x: 48,
+                    y: 170,
+                    radius: 20,
+                    base: this.add.circle(0, 0, 40, 0x888888),
+                    thumb: this.add.circle(0, 0, 20, 0xcccccc),
+                    // dir: '8dir',   // 'up&down'|0|'left&right'|1|'4dir'|2|'8dir'|3
+                    // forceMin: 16,
+                    // enable: true
+                })
                 .on('update', this.dumpJoyStickState, this);
 
             this.text = this.add.text(0, 0);
@@ -646,21 +645,21 @@ class Level1 extends Phaser.Scene {
             //botao pular
             var expand = true;
             var buttons = this.rexUI.add.buttons({
-                x: 355,
-                y: 200,
-                width: 20,
-                orientation: 'x',
+                    x: 355,
+                    y: 200,
+                    width: 20,
+                    orientation: 'x',
 
-                buttons: [
-                    createButton2(this, '^'),
-                    createButton2(this, 'Z'),
-                    createButton2(this, 'Som')
-                ],
-                expand: expand
-            })
+                    buttons: [
+                        createButton2(this, '^'),
+                        createButton2(this, 'Z'),
+                        createButton2(this, 'Som')
+                    ],
+                    expand: expand
+                })
                 .layout()
             buttons
-                .on('button.click', function (button, index, pointer, event) {
+                .on('button.click', function(button, index, pointer, event) {
                     if (jump == 1 && index == 0) {
                         jump = 0;
                         player.body.setVelocity(player.body.velocity.x, player.body.velocity.y - 100);
@@ -679,10 +678,10 @@ class Level1 extends Phaser.Scene {
 
                     }
                 })
-                .on('button.over', function (button, groupName, index, pointer, event) {
+                .on('button.over', function(button, groupName, index, pointer, event) {
                     //button.getElement('background').setStrokeStyle(1, 0xffffff);
                 })
-                .on('button.out', function (button, groupName, index, pointer, event) {
+                .on('button.out', function(button, groupName, index, pointer, event) {
                     //button.getElement('background').setStrokeStyle();
                 });
 
@@ -691,7 +690,7 @@ class Level1 extends Phaser.Scene {
 
         //movimentação do player
         var space = this.input.keyboard.addKey('SPACE');
-        space.on('down', function (event) {
+        space.on('down', function(event) {
             if (jump == 1) {
                 jump = 0;
                 player.body.setVelocity(player.body.velocity.x, player.body.velocity.y - 100);
@@ -700,7 +699,7 @@ class Level1 extends Phaser.Scene {
 
         //placa
         var keyz = this.input.keyboard.addKey('Z');
-        keyz.on('down', function (event) {
+        keyz.on('down', function(event) {
             if (canMove) {
 
             }
@@ -729,10 +728,10 @@ class Level1 extends Phaser.Scene {
             if (canMove && (z.isDown || activebox == 1)) {
                 canMove = false;
                 createTextBox(this, player.x - 130, 100, {
-                    wrapWidth: 200,
-                    fixedWidth: 190,
-                    fixedHeight: 45,
-                })
+                        wrapWidth: 200,
+                        fixedWidth: 190,
+                        fixedHeight: 45,
+                    })
                     .start(content, 50);
             }
         }
@@ -741,10 +740,10 @@ class Level1 extends Phaser.Scene {
             if (canMove && (z.isDown || activebox == 1)) {
                 canMove = false;
                 createTextBox(this, player.x - 130, 100, {
-                    wrapWidth: 200,
-                    fixedWidth: 190,
-                    fixedHeight: 45,
-                })
+                        wrapWidth: 200,
+                        fixedWidth: 190,
+                        fixedHeight: 45,
+                    })
                     .start(content2, 50);
             }
         }
@@ -822,8 +821,12 @@ class Level1 extends Phaser.Scene {
 
         if (win) {
             console.log("win")
+            if (this.scale.isFullscreen) {
+                this.scale.stopFullscreen();
+            }
             //this.scene.start('quiz');
             this.scene.start('newQuiz');
+
         }
         if (morreu) {
             morreu = false;
@@ -854,39 +857,39 @@ class Level1 extends Phaser.Scene {
 }
 
 const GetValue = Phaser.Utils.Objects.GetValue;
-var createTextBox = function (scene, x, y, config) {
+var createTextBox = function(scene, x, y, config) {
     var wrapWidth = GetValue(config, 'wrapWidth', 0);
     var fixedWidth = GetValue(config, 'fixedWidth', 0);
     var fixedHeight = GetValue(config, 'fixedHeight', 0);
     var textBox = scene.rexUI.add.textBox({
-        x: x,
-        y: y,
+            x: x,
+            y: y,
 
-        background: scene.rexUI.add.roundRectangle(0, 0, 2, 2, 20, COLOR_PRIMARY)
-            .setStrokeStyle(2, COLOR_LIGHT),
+            background: scene.rexUI.add.roundRectangle(0, 0, 2, 2, 20, COLOR_PRIMARY)
+                .setStrokeStyle(2, COLOR_LIGHT),
 
-        icon: scene.rexUI.add.roundRectangle(0, 0, 2, 2, 20, COLOR_DARK),
+            icon: scene.rexUI.add.roundRectangle(0, 0, 2, 2, 20, COLOR_DARK),
 
-        // text: getBuiltInText(scene, wrapWidth, fixedWidth, fixedHeight),
-        text: getBBcodeText(scene, wrapWidth, fixedWidth, fixedHeight),
+            // text: getBuiltInText(scene, wrapWidth, fixedWidth, fixedHeight),
+            text: getBBcodeText(scene, wrapWidth, fixedWidth, fixedHeight),
 
-        action: scene.add.image(0, 0, 'nextPage').setTint(COLOR_LIGHT).setVisible(false),
+            action: scene.add.image(0, 0, 'nextPage').setTint(COLOR_LIGHT).setVisible(false),
 
-        space: {
-            left: 20,
-            right: 20,
-            top: 20,
-            bottom: 20,
-            icon: 10,
-            text: 10,
-        }
-    })
+            space: {
+                left: 20,
+                right: 20,
+                top: 20,
+                bottom: 20,
+                icon: 10,
+                text: 10,
+            }
+        })
         .setOrigin(0)
         .layout();
 
     textBox
         .setInteractive()
-        .on('pointerdown', function () {
+        .on('pointerdown', function() {
             var icon = this.getElement('action').setVisible(false);
             this.resetChildVisibleState(icon);
             if (this.isTyping) {
@@ -895,7 +898,7 @@ var createTextBox = function (scene, x, y, config) {
                 this.typeNextPage();
             }
         }, textBox)
-        .on('pageend', function () {
+        .on('pageend', function() {
             if (this.isLastPage) {
                 canMove = true;
                 activebox = 0;
@@ -914,24 +917,24 @@ var createTextBox = function (scene, x, y, config) {
                 yoyo: false
             });
         }, textBox)
-    //.on('type', function () {
-    //})
+        //.on('type', function () {
+        //})
 
     return textBox;
 }
 
-var getBuiltInText = function (scene, wrapWidth, fixedWidth, fixedHeight) {
+var getBuiltInText = function(scene, wrapWidth, fixedWidth, fixedHeight) {
     return scene.add.text(0, 0, '', {
-        fontSize: '15px',
-        wordWrap: {
-            width: wrapWidth
-        },
-        maxLines: 3
-    })
+            fontSize: '15px',
+            wordWrap: {
+                width: wrapWidth
+            },
+            maxLines: 3
+        })
         .setFixedSize(fixedWidth, fixedHeight);
 }
 
-var getBBcodeText = function (scene, wrapWidth, fixedWidth, fixedHeight) {
+var getBBcodeText = function(scene, wrapWidth, fixedWidth, fixedHeight) {
     return scene.rexUI.add.BBCodeText(0, 0, '', {
         fixedWidth: fixedWidth,
         fixedHeight: fixedHeight,
@@ -945,7 +948,7 @@ var getBBcodeText = function (scene, wrapWidth, fixedWidth, fixedHeight) {
     })
 }
 
-var createButton2 = function (scene, text) {
+var createButton2 = function(scene, text) {
     return scene.rexUI.add.label({
         width: 20,
         height: 20,
@@ -961,7 +964,7 @@ var createButton2 = function (scene, text) {
     });
 }
 
-var collectCoin = function (player, coin) {
+var collectCoin = function(player, coin) {
     if (activeSound == 1) {
         coinSound.play();
     }
@@ -970,6 +973,6 @@ var collectCoin = function (player, coin) {
     scoreValue += 10;
 }
 
-var bubbleBounce = function (bolha) {
+var bubbleBounce = function(bolha) {
     bolha.setVelocityY(-150)
 }

@@ -12,15 +12,15 @@ var check = 0;
 var hrInicio;
 
 hrInicio = new Date();
-let h = hrInicio.toISOString();  
+let h = hrInicio.toISOString();
 let hh = [];
 hh = h.split("T");
 let hh2 = [];
 hh2 = hh[1].split(".")
 h = hh[0] + " " + hh2[0];
 
-h = h.replace("-","/");
-h = h.replace("-","/");
+h = h.replace("-", "/");
+h = h.replace("-", "/");
 
 hrInicio = h;
 
@@ -59,8 +59,8 @@ class Menu extends Phaser.Scene {
     }
 
     create() {
-        
-        
+
+
         layer8 = this.add.tileSprite(this.sys.canvas.width / 2, this.sys.canvas.height / 2, this.sys.canvas.width, this.sys.canvas.height, 'sky');
         layer8.setScrollFactor(0);
         layer1 = this.add.tileSprite(this.sys.canvas.width / 2, this.sys.canvas.height / 2, this.sys.canvas.width, this.sys.canvas.height, 'cloudbg');
@@ -93,7 +93,7 @@ class Menu extends Phaser.Scene {
             })
             .layout()
             //.drawBounds(this.add.graphics(), 0xff0000)
-            
+
 
         buttons
             .on('button.click', function(button, index, pointer, event) {
@@ -138,6 +138,5 @@ var createButton = function(scene, text) {
         },
         align: 'center'
     });
-    
-}
 
+}
