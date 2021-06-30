@@ -98,9 +98,11 @@
                 }
             }).done(function(data) {
                 let sss = "";
+
                 titulo = data["pergunta"];
                 quizId = data["quiz_id"];
                 ss = data["alternativas"];
+
                 alternativas = [];
                 ids = [];
 
@@ -111,6 +113,9 @@
                     alternativas[i] = element["descricao"];
                     i++;
                 }
+
+                //mistura as alternativas
+                alternativas = shuffle(alternativas);
 
                 let divs = $('#div').children();
                 for (let i = 0; i < 4; i++) {
@@ -127,7 +132,8 @@
 
         function respondeQuiz(id) {
             let hrFim = horaFinal();
-            console.log(hrFim)
+            // console.log("respondeu: ")
+            // console.log(hrFim)
             $.ajax({
                     method: "POST",
                     url: `https://apichemical.quimicotgames.com/aluno/turmas/fases/${turmaFase}/quiz`,
@@ -143,9 +149,13 @@
                         }) //
                 })
                 .done(function(data) {
-                    console.log(data)
+                    // console.log("done");
+                    // console.log("id: ", id);
+                    // console.log(data);
+
                     let correto = data["Correto"];
-                    console.log(correto)
+
+                    // console.log(correto)
                     if (correto) {
                         status = "ACERTOU"
                     } else {
@@ -153,34 +163,59 @@
                     }
 
                     let arr = data['alternativasJustificadas']
-                    console.log(arr)
+                        // console.log(arr)
 
                     let divs = $('#div').children();
-                    $(`#title`).empty().append(`${status}`)
-                    $(`#title`).append(`<br><br>`)
-                    $(`#title`).append(`Justificativas`)
+                    $(`#title`).empty().append(`${status}`);
+                    $(`#title`).append(`<br><br>`);
+                    $(`#title`).append(`Justificativas`);
 
-                    for (let i = 0; i < 4; i++) {
-                        $(`#${divs[i].id}`).empty().append(` `)
-                        if (i == id - 1) {
-                            let alt = arr[i].descricao;
-                            $(`#${divs[i].id}`).empty().append(`${alt}`)
-                            if (arr[i].alt_correta) {
-                                $(`#${divs[i].id}`).css({
-                                    "background": "#00FF00"
-                                })
-                            } else {
-                                $(`#${divs[i].id}`).css({
-                                    "background": "#FF0000"
-                                })
-                            }
+                    $(`#div`).empty().append(``)
+
+                    // console.log("descricao")
+                    // console.log(arr)
+
+                    let alt;
+                    for (i in arr) {
+                        if (arr[i].id == id) {
+                            // console.log("id")
+                            // console.log(arr[i])
+                            data = arr[i];
+                            // console.log(data)
+                            alt = data["justificativa"];
                         }
-
-
+                        //console.log(arr[i].id)
                     }
-                    $('div').append("<br>")
-                    $('#div').append(`<div class="col"><form action="http://quimicotgames.com/WEB/IC_GerenciaDeAlunos/public_html"><button class="btn btn-primary" type="submit">voltar</button></form></div>`)
-                })
+
+
+                    $(`#div`).empty().append(`&nbsp;<div id="div1">  ${alt}</div>`);
+
+                    //console.log("correto: ", data["alt_correta"])
+
+                    if (data["alt_correta"]) {
+                        $(`#div1`).css({
+                            "background": "#00FF00"
+                        })
+                    } else {
+                        $(`#div1`).css({
+                            "background": "lightcoral"
+                        })
+                    }
+
+                    $('div').append("<br>");
+                    $('#div').append(`<div class="col"><button class="btn btn-primary" onclick="fecha()" type="submit">voltar</button></div>`);
+                });
+        }
+
+        function fecha() {
+            //console.log("fechou");
+            location.reload();
+            //window.close();
+        }
+
+        function shuffle(array) {
+            array = array.sort(() => Math.random() - 0.5);
+            return array;
         }
 
         function horaFinal() {
