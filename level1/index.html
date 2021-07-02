@@ -114,9 +114,6 @@
                     i++;
                 }
 
-                //mistura as alternativas
-                alternativas = shuffle(alternativas);
-
                 let divs = $('#div').children();
                 for (let i = 0; i < 4; i++) {
                     $(`#${divs[i].id}`).append(`<button class="" onclick="respondeQuiz(${ids[i]})"> ${letras[i]} - ${alternativas[i]}</abutton>`)
@@ -211,11 +208,6 @@
             //console.log("fechou");
             location.reload();
             //window.close();
-        }
-
-        function shuffle(array) {
-            array = array.sort(() => Math.random() - 0.5);
-            return array;
         }
 
         function horaFinal() {
