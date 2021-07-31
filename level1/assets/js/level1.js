@@ -554,7 +554,7 @@ class Level1 extends Phaser.Scene {
         bubbles = this.add.image(1528, 184, "bolhas");
         bubbles = this.add.image(1640, 184, "bolhas");
 
-        //
+        // player hp
         var hp1 = this.add.sprite(8, 8, "playerhp");
         hp1.setScrollFactor(0);
         hp.push(hp1);

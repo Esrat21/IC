@@ -3,7 +3,7 @@
 
 <head>
     <script src="assets/js/phaser.js"></script>
-    <script src="assets/js/jquery-3.5.1.min.js"></script> 
+    <script src="assets/js/jquery-3.5.1.min.js"></script>
     <title>IC</title>
     <style>
         body {
@@ -14,7 +14,7 @@
             justify-content: center !important;
             display: flex !important;
         }
-
+        
         canvas {
             margin: 0px !important;
             padding: 0px !important;
@@ -27,11 +27,180 @@
 
 <body>
     <div id='game'>
+        <script src="assets/js/menu.js"></script>
         <script src="assets/js/game.js"></script>
-        <script src="assets/js/quiz.js"></script> 
-        <script src="assets/js/index.js"></script>  
-         
+        <script src="assets/js/quiz.js"></script>
+        <script src="assets/js/index.js"></script>
     </div>
+
+    <div class="container justify-content-center rounded" id="quiz" style="background: lightgray; ">
+        &nbsp;
+        <div class="row ">
+            <div class="col-sm-2"><img src="assets/images/ui/choose.png" alt="choose"></div>
+            <div class="col-sm-8 text-center" id="title" style=""></div>
+        </div>
+
+        <div class="col overflow-hidden" id="div" style="background-color:white;margin-bottom: 2vh;">
+            <div class="col" style="text-align: left" id="alt1">
+
+            </div>
+            <div class="col" style="margin-top: 2vh;" id="alt2">
+
+            </div>
+            <div class="col" style="margin-top: 2vh;" id="alt3">
+
+            </div>
+            <div class="col" style="margin-top: 2vh; margin-bottom: 2vh;" id="alt4">
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $('#quiz').hide()
+
+        let titulo, alternativas = [],
+            ids = [],
+            just = [],
+            quizId;
+        let letras = ["a", "b", "c", "d"];
+
+        function getQuiz() {
+            $.ajax({
+                method: "GET",
+                url: `https://apichemical.quimicotgames.com/aluno/turmas/fases/${turmaFase}/quiz`,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${tokenAluno}`
+                }
+            }).done(function(data) {
+                let sss = "";
+
+                titulo = data["pergunta"];
+                quizId = data["quiz_id"];
+                ss = data["alternativas"];
+
+                alternativas = [];
+                ids = [];
+
+                let i = 0;
+                for (let alt in ss) {
+                    let element = ss[alt]
+                    ids[i] = element["id"];
+                    alternativas[i] = element["descricao"];
+                    i++;
+                }
+
+                let divs = $('#div').children();
+                for (let i = 0; i < 4; i++) {
+                    $(`#${divs[i].id}`).append(`<button class="" onclick="respondeQuiz(${ids[i]})"> ${letras[i]} - ${alternativas[i]}</abutton>`)
+                }
+                $('#title').append(`${titulo}`)
+                $(`#title`).append(`<br><br>`)
+
+            })
+        }
+
+        let data;
+        let quiz = getQuiz();
+
+        function respondeQuiz(id) {
+            let hrFim = horaFinal();
+            // console.log("respondeu: ")
+            // console.log(hrFim)
+            $.ajax({
+                    method: "POST",
+                    url: `https://apichemical.quimicotgames.com/aluno/turmas/fases/${turmaFase}/quiz`,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${tokenAluno}`
+                    },
+                    data: JSON.stringify({
+                            turma_fase: turmaFase,
+                            quiz: quizId,
+                            escolha: id,
+                            data_hora: hrFim, //Y-m-d H:i:s
+                        }) //
+                })
+                .done(function(data) {
+                    // console.log("done");
+                    // console.log("id: ", id);
+                    // console.log(data);
+
+                    let correto = data["Correto"];
+
+                    // console.log(correto)
+                    if (correto) {
+                        status = "ACERTOU"
+                    } else {
+                        status = "ERROU"
+                    }
+
+                    let arr = data['alternativasJustificadas']
+                        // console.log(arr)
+
+                    let divs = $('#div').children();
+                    $(`#title`).empty().append(`${status}`);
+                    $(`#title`).append(`<br><br>`);
+                    $(`#title`).append(`Justificativas`);
+
+                    $(`#div`).empty().append(``)
+
+                    // console.log("descricao")
+                    // console.log(arr)
+
+                    let alt;
+                    for (i in arr) {
+                        if (arr[i].id == id) {
+                            // console.log("id")
+                            // console.log(arr[i])
+                            data = arr[i];
+                            // console.log(data)
+                            alt = data["justificativa"];
+                        }
+                        //console.log(arr[i].id)
+                    }
+
+                    $(`#div`).empty().append(`&nbsp;<div id="div1">${alt}</div>`);
+                    //console.log("correto: ", data["alt_correta"])
+
+                    if (data["alt_correta"]) {
+                        $(`#div1`).css({
+                            "background": "#00FF00"
+                        })
+                    } else {
+                        $(`#div1`).css({
+                            "background": "lightcoral"
+                        })
+                    }
+
+                    $('div').append("<br>");
+                    $('#div').append(`<div class="col"><button class="btn btn-primary" onclick="fecha()" type="submit">voltar</button></div>`);
+                });
+        }
+
+        function fecha() {
+            //console.log("fechou");
+            location.reload();
+            //window.close();
+        }
+
+        function horaFinal() {
+            hrFim = new Date();
+            let h = hrFim.toISOString();
+            let hh = [];
+            hh = h.split("T");
+            let hh2 = [];
+            hh2 = hh[1].split(".")
+            h = hh[0] + " " + hh2[0];
+
+            h = h.replace("-", "/");
+            h = h.replace("-", "/");
+
+            hrFim = h;
+            return hrFim;
+        }
+    </script>
 </body>
 
 </html>
