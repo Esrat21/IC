@@ -57,8 +57,8 @@ let bubbles;
 function die() {
     //console.log("Tile X: " + parseInt(player.x / 16) + "\nTile Y: " + parseInt(player.y / 16));
 
-    let px = player.x;
-    let py = player.y;
+    let px = Math.floor(player.x);
+    let py = Math.floor(player.y);
 
     let obstaculos = ["baloes", "airship"];
     if (px > 370 && px < 670) {
@@ -96,7 +96,7 @@ function die() {
         //
         $.ajax({
                 method: "POST",
-                url: "apichemical.quimicotgames.com/aluno/log",
+                url: "https://apichemical.quimicotgames.com/aluno/log",
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${tokenAluno}`,
@@ -122,6 +122,8 @@ function die() {
                 morreu = true;
                 //this.scene.start('gameOver');
             });
+            console.log('obstaculos:' + ob);
+            console.log('vetor:' + vMortes);
         //this.scene.start('gameOver');
     }
 

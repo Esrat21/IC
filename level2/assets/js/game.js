@@ -1,15 +1,27 @@
 let hrFim;
-let player, hp = [], mortes = 0, vMortes = []; 
-let playerWin = false, ckpx = 256, ckpy = 1920;
-let cam, minCamY = 0, maxCamY = 0;
+let player, hp = [],
+    mortes = 0,
+    vMortes = [];
+let playerWin = false,
+    ckpx = 256,
+    ckpy = 1920;
+let cam, minCamY = 0,
+    maxCamY = 0;
 let a, d, z, w, s, x; //variaveis de input
 let leftKeyDown, rightKeyDown, upKeyDown, downKeyDown; //variaveis de input virtual joystick
 let l1, l2, l3, l4, l5, l6, l7, l8, l9, l10, l11, l12, l13; // layers do parallax
-let balaoAr, balaoHe, balaoNe, baloes; // baloes que sobem
+let baloesAr, colidindo = false,
+    baloes; // baloes que sobem
 let pitstops = [1665, 1377, 1057, 737, 433, 161]; // marca em que os baloes mais pesados explodem, (1377 AR, 737 NE, 161 HE)
 let onFloor = false;
-let reset = false, activeText = false, canMove = true, danoQueda = false; // variavel para resetar os baloes
+let reset = false,
+    activeText = false,
+    canMove = true,
+    danoQueda = false; // variavel para resetar os baloes
 let content = `Phaser is a fast, free, and fun open source HTML5 game framework that offers WebGL and Canvas rendering across desktop and mobile web browsers. Games can be compiled to iOS, Android and native apps by using 3rd party tools. You can use JavaScript or TypeScript for development.`;
+let coin, coins, coinSound, activeSound = true;
+let scoreValue = 0,
+    obstaculo = [];
 
 class Game extends Phaser.Scene {
     constructor() {
@@ -69,6 +81,35 @@ class Game extends Phaser.Scene {
         this.load.image("balaoHe", "./assets/images/items/balaoHe.png");
         this.load.image("balaoNe", "./assets/images/items/balaoNe.png");
         this.load.image("balaoAr", "./assets/images/items/balaoAr.png");
+
+        //coin sound
+        this.load.audio("coinSound", "./assets/sounds/coins2.mp3");
+
+        //load gold coins
+        this.load.image(
+            "coin1",
+            "./assets/images/items/GoldCoin/gold_coin_round_star_1.png"
+        );
+        this.load.image(
+            "coin2",
+            "./assets/images/items/GoldCoin/gold_coin_round_star_2.png"
+        );
+        this.load.image(
+            "coin3",
+            "./assets/images/items/GoldCoin/gold_coin_round_star_3.png"
+        );
+        this.load.image(
+            "coin4",
+            "./assets/images/items/GoldCoin/gold_coin_round_star_4.png"
+        );
+        this.load.image(
+            "coin5",
+            "./assets/images/items/GoldCoin/gold_coin_round_star_5.png"
+        );
+        this.load.image(
+            "coin6",
+            "./assets/images/items/GoldCoin/gold_coin_round_star_6.png"
+        );
 
         //load maps
         this.load.image("tiles", "./assets/maps/tiles.png");
@@ -240,12 +281,32 @@ class Game extends Phaser.Scene {
         hp1.setScrollFactor(0);
         hp.push(hp1);
 
+        //gold coins
+        let arrX = [7, 12, 8, 19, 26, 20, 14, 8, 27];
+        let arrY = [10, 20, 30, 40, 50, 60, 70, 80, 90];
+
+        coinSound = this.sound.add("coinSound");
+        coinSound.setVolume(0.25);
+
+        coins = this.physics.add.group();
+
+        for (let i = 0; i < 9; i++) {
+            coin = this.physics.add.sprite(
+                arrX[i] * 16 + 8,
+                arrY[i] * 16 + 8,
+                "coin1"
+            );
+            coin.setScale(0.25, 0.25);
+            coins.add(coin);
+        }
+
         //baloes
         //massa molar Ar atmosferico 28,96 g/mol
         //massa molar he 4g/mol
         //massa molar argonio 39,948g/mol
         //massa molar 20,179g/mol
         baloes = this.physics.add.group();
+        baloesAr = this.physics.add.group();
         let j = 0;
         let y = 1970;
         let balao;
@@ -253,58 +314,91 @@ class Game extends Phaser.Scene {
             if (j == 0) {
                 balao = baloes.create(90, y, "balaoHe");
                 balao.body.pushable = false;
-                balao = baloes.create(200, y, "balaoAr");
+                balao.body.checkCollision.down = false;
+                balao.body.checkCollision.left = false;
+                balao.body.checkCollision.right = false;
+                balao = baloesAr.create(200, y, "balaoAr");
                 balao.body.pushable = false;
+                balao.body.checkCollision.down = false;
+                balao.body.checkCollision.left = false;
+                balao.body.checkCollision.right = false;
                 balao = baloes.create(310, y, "balaoNe");
                 balao.body.pushable = false;
+                balao.body.checkCollision.down = false;
+                balao.body.checkCollision.left = false;
+                balao.body.checkCollision.right = false;
                 j++;
             } else if (j == 1) {
                 let balao = baloes.create(90, y, "balaoNe");
                 balao.body.pushable = false;
+                balao.body.checkCollision.down = false;
+                balao.body.checkCollision.left = false;
+                balao.body.checkCollision.right = false;
                 balao = baloes.create(200, y, "balaoHe");
                 balao.body.pushable = false;
-                balao = baloes.create(310, y, "balaoAr");
+                balao.body.checkCollision.down = false;
+                balao.body.checkCollision.left = false;
+                balao.body.checkCollision.right = false;
+                balao = baloesAr.create(310, y, "balaoAr");
                 balao.body.pushable = false;
+                balao.body.checkCollision.down = false;
+                balao.body.checkCollision.left = false;
+                balao.body.checkCollision.right = false;
                 j++;
             } else {
-                balao = baloes.create(90, y, "balaoAr");
+                balao = baloesAr.create(90, y, "balaoAr");
                 balao.body.pushable = false;
+                balao.body.checkCollision.down = false;
+                balao.body.checkCollision.left = false;
+                balao.body.checkCollision.right = false;
                 balao = baloes.create(200, y, "balaoNe");
                 balao.body.pushable = false;
+                balao.body.checkCollision.down = false;
+                balao.body.checkCollision.left = false;
+                balao.body.checkCollision.right = false;
                 balao = baloes.create(310, y, "balaoHe");
                 balao.body.pushable = false;
+                balao.body.checkCollision.down = false;
+                balao.body.checkCollision.left = false;
+                balao.body.checkCollision.right = false;
                 j = 0;
             }
             y -= 120;
         }
         baloes.setVelocityY(-60);
-
-        /*
-            balaoHe = this.physics.add.sprite(90,1970,'balaoHe');
-            balaoHe.body.pushable = false;
-            balaoAr = this.physics.add.sprite(200,1970,'balaoAr');
-            balaoAr.body.pushable = false;
-            balaoNe = this.physics.add.sprite(310,1970,'balaoNe');
-            balaoNe.body.pushable = false;
-
-            baloes = this.physics.add.group();
-            baloes.add(balaoHe);
-            baloes.add(balaoAr);
-            baloes.add(balaoNe);
-        */
+        baloesAr.setVelocityY(-60);
 
         //colisoes
         this.physics.add.collider(player, floor, function() {});
 
         this.physics.add.collider(player, baloes, function() {
             baloes.setVelocityY(-60);
+            // console.log("colidiu")
         });
 
-        this.physics.add.collider(floor, baloes);
+        this.physics.add.collider(player, baloesAr, function(player, balao) {
+
+            //console.log(balao.body)
+            console.log(colidindo)
+            colidindo = true;
+
+            if (balao.body.velocity.y < -10) {
+                balao.setVelocityY(20)
+                player.setVelocityY(20)
+            }
+
+        });
+
+        this.physics.add.overlap(player, coins, collectCoin);
 
         this.physics.add.collider(baloes, ceiling, function(baloes) {
             baloes.y = 1970;
             baloes.setVelocityY(-60);
+        });
+
+        this.physics.add.collider(baloesAr, ceiling, function(baloesAr) {
+            baloesAr.y = 1970;
+            baloesAr.setVelocityY(-60);
         });
 
         this.physics.add.collider(player, ceiling, function() {
@@ -330,7 +424,7 @@ class Game extends Phaser.Scene {
                 //
                 $.ajax({
                         method: "POST",
-                        url: "apichemical.quimicotgames.com/aluno/log",
+                        url: "https://apichemical.quimicotgames.com/aluno/log",
                         headers: {
                             "Content-Type": "application/json",
                             Authorization: `Bearer ${tokenAluno}`,
@@ -375,6 +469,27 @@ class Game extends Phaser.Scene {
             framerate: 10,
             repeat: 0,
         });
+
+        // coins
+        this.anims.create({
+            key: "coinFlip",
+            frames: [
+                { key: "coin1" },
+                { key: "coin2" },
+                { key: "coin3" },
+                { key: "coin4" },
+                { key: "coin5" },
+                { key: "coin6" },
+            ],
+            framerate: 15,
+            repeat: -1,
+        });
+
+        let coinnss = coins.getChildren();
+
+        for (let i in coinnss) {
+            coinnss[i].play("coinFlip");
+        }
 
         //******************************************************************************************************************************
         //joystick
@@ -483,10 +598,18 @@ class Game extends Phaser.Scene {
         let space = this.input.keyboard.addKey("SPACE");
         space.on("down", function(event) {
             if (onFloor) {
-                player.body.setVelocity(
-                    player.body.velocity.x,
-                    player.body.velocity.y - 80
-                );
+                if (player.body.velocity.y > 0) {
+                    player.body.setVelocity(
+                        player.body.velocity.x,
+                        player.body.velocity.y - 160
+                    );
+                } else {
+                    player.body.setVelocity(
+                        player.body.velocity.x,
+                        player.body.velocity.y - 80
+                    );
+                }
+
             }
         });
 
@@ -544,7 +667,6 @@ class Game extends Phaser.Scene {
             onFloor = player.body.onFloor();
 
             if (player.body.velocity.y > 200) {
-                //resetabaloes();
                 danoQueda = true;
             }
 
@@ -554,6 +676,12 @@ class Game extends Phaser.Scene {
 
             if (player.body.onFloor() && danoQueda) {
                 morreu()
+            }
+
+            if (!colidindo) {
+                baloesAr.setVelocityY(-60);
+            } else {
+                colidindo = false
             }
         }
         //*******************************************************************************************************************************
@@ -712,21 +840,30 @@ var createButton2 = function(scene, text) {
     });
 };
 
+var collectCoin = function(player, coin) {
+    if (activeSound) {
+        coinSound.play();
+    }
+
+    coin.destroy(coin.x, coin.y);
+    scoreValue += 10;
+};
+
 function morreu() {
     //console.log("Tile X: " + parseInt(player.x / 16) + "\nTile Y: " + parseInt(player.y / 16));
-
     let px = player.x;
     let py = player.y;
 
-    let obstaculos = ["baloes", "airship"];
-    if (px > 370 && px < 670) {
-        ob.push(obstaculos[0]);
-    } else if (px > 1000 && px < 1745) {
-        ob.push(obstaculos[1]);
-    }
-
     player.x = ckpx;
     player.y = ckpy;
+    player.setVelocityY(0);
+    player.setVelocityX(0);
+
+    if (danoQueda) {
+        obstaculo.push("Queda");
+    } else {
+        obstaculo.push("spike");
+    }
 
     if (mortes == 0) {
         hp[0].play("death");
@@ -751,34 +888,34 @@ function morreu() {
         hrFim = h;
 
         console.log("h': " + hrFim);
-        // $.ajax({
-        //         method: "POST",
-        //         url: "apichemical.quimicotgames.com/aluno/log",
-        //         headers: {
-        //             "Content-Type": "application/json",
-        //             Authorization: `Bearer ${tokenAluno}`,
-        //         },
-        //         data: JSON.stringify({
-        //             turma_fase: turmaFase, //
-        //             detalhes: "morreu nas coordenadas x: " + px + ", y: " + py,
-        //             tipo: "morte",
-        //             comeco: hrInicio, //Y-m-d H:i:s
-        //             fim: hrFim, //Y-m-d H:i:s
-        //             objeto: JSON.stringify({
-        //                 obstaculos: ob,
-        //                 coordenadas: vMortes,
-        //             }),
-        //         }),
-        //     })
-        //     .done(function() {
-        //         morreu = true;
-        //         //this.scene.start('gameOver');
-        //     })
-        //     .fail(function(jqXHR, textStatus, msg) {
-        //         console.log(msg);
-        //         morreu = true;
-        //         //this.scene.start('gameOver');
-        //     });
+        $.ajax({
+                method: "POST",
+                url: "https://apichemical.quimicotgames.com/aluno/log",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${tokenAluno}`,
+                },
+                data: JSON.stringify({
+                    turma_fase: turmaFase, //
+                    detalhes: "morreu nas coordenadas x: " + px + ", y: " + py,
+                    tipo: "morte",
+                    comeco: hrInicio, //Y-m-d H:i:s
+                    fim: hrFim, //Y-m-d H:i:s
+                    objeto: JSON.stringify({
+                        obstaculos: obstaculo,
+                        coordenadas: "",
+                    }),
+                }),
+            })
+            .done(function() {
+                morreu = true;
+                //this.scene.start('gameOver');
+            })
+            .fail(function(jqXHR, textStatus, msg) {
+                console.log(msg);
+                morreu = true;
+                //this.scene.start('gameOver');
+            });
     }
     mortes++
     danoQueda = false;
