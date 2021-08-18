@@ -5,6 +5,7 @@ let player, hp = [],
 let playerWin = false,
     ckpx = 256,
     ckpy = 1920;
+let zpopup, placa, activeBox = 0;
 let cam, minCamY = 0,
     maxCamY = 0;
 let a, d, z, w, s, x; //variaveis de input
@@ -18,7 +19,7 @@ let reset = false,
     activeText = false,
     canMove = true,
     danoQueda = false; // variavel para resetar os baloes
-let content = `Phaser is a fast, free, and fun open source HTML5 game framework that offers WebGL and Canvas rendering across desktop and mobile web browsers. Games can be compiled to iOS, Android and native apps by using 3rd party tools. You can use JavaScript or TypeScript for development.`;
+let content = `O elemento Hélio foi descoberto por Pierre - Jules - César Janssen após observações do espectro de luz do sol, o cientista percebeu a existência de um espectro de luz que ainda não era conhecido na terra, chamando então o novo elemento de Hélio, em referência a personificação divina do sol na mitologia grega, ocupa a 2° posição na tabela periódica e é um gás nobre, possui uma densidade baixa em relação ao ar atmosférico, sendo o segundo elemento mais abundante no universo, logo após o Hidrogênio.`;
 let coin, coins, coinSound, activeSound = true;
 let scoreValue = 0,
     obstaculo = [];
@@ -40,6 +41,12 @@ class Game extends Phaser.Scene {
             url: "./assets/js/rexuiplugin.min.js",
             sceneKey: "rexUI",
         });
+
+        this.load.spritesheet("zpopup", "./assets/images/ui/zPopup.png", {
+            frameWidth: 32,
+            frameHeight: 32,
+        });
+
         //virtual joystick
         this.load.plugin(
             "rexvirtualjoystickplugin",
@@ -300,6 +307,10 @@ class Game extends Phaser.Scene {
             coins.add(coin);
         }
 
+        //placa
+        zpopup = this.add.sprite(390, 1920, "zpopup");
+        zpopup.setScale(0.5, 0.5);
+
         //baloes
         //massa molar Ar atmosferico 28,96 g/mol
         //massa molar he 4g/mol
@@ -319,7 +330,6 @@ class Game extends Phaser.Scene {
                 balao.body.checkCollision.right = false;
                 balao = baloesAr.create(200, y, "balaoAr");
                 balao.body.pushable = false;
-                balao.body.checkCollision.down = false;
                 balao.body.checkCollision.left = false;
                 balao.body.checkCollision.right = false;
                 balao = baloes.create(310, y, "balaoNe");
@@ -341,14 +351,12 @@ class Game extends Phaser.Scene {
                 balao.body.checkCollision.right = false;
                 balao = baloesAr.create(310, y, "balaoAr");
                 balao.body.pushable = false;
-                balao.body.checkCollision.down = false;
                 balao.body.checkCollision.left = false;
                 balao.body.checkCollision.right = false;
                 j++;
             } else {
                 balao = baloesAr.create(90, y, "balaoAr");
                 balao.body.pushable = false;
-                balao.body.checkCollision.down = false;
                 balao.body.checkCollision.left = false;
                 balao.body.checkCollision.right = false;
                 balao = baloes.create(200, y, "balaoNe");
@@ -373,6 +381,12 @@ class Game extends Phaser.Scene {
 
         this.physics.add.collider(player, baloes, function() {
             baloes.setVelocityY(-60);
+            // console.log("colidiu")
+        });
+
+        this.physics.add.collider(baloesAr, baloes, function() {
+            baloes.setVelocityY(-60);
+            baloesAr.setVelocityY(-60);
             // console.log("colidiu")
         });
 
@@ -416,8 +430,8 @@ class Game extends Phaser.Scene {
                 let hh2 = [];
                 hh2 = hh[1].split(".");
                 h = hh[0] + " " + hh2[0];
-                h = h.replace("-", "/");
-                h = h.replace("-", "/");
+                // h = h.replace("-", "/");
+                // h = h.replace("-", "/");
                 hrFim = h;
 
                 console.log("h': " + hrFim);
@@ -430,7 +444,7 @@ class Game extends Phaser.Scene {
                             Authorization: `Bearer ${tokenAluno}`,
                         },
                         data: JSON.stringify({
-                            fase: turmaFase, //
+                            turma_fase: turmaFase, //
                             detalhes: "Concluiu a fase " + turmaFase,
                             tipo: "fim da fase",
                             comeco: hrInicio, //Y-m-d H:i:s
@@ -470,6 +484,16 @@ class Game extends Phaser.Scene {
             repeat: 0,
         });
 
+        //popup placa
+        this.anims.create({
+            key: "popup",
+            frames: this.anims.generateFrameNumbers("zpopup"),
+            framerate: 15,
+            repeat: -1,
+        });
+        zpopup.play("popup");
+        zpopup.setVisible(false);
+
         // coins
         this.anims.create({
             key: "coinFlip",
@@ -484,7 +508,6 @@ class Game extends Phaser.Scene {
             framerate: 15,
             repeat: -1,
         });
-
         let coinnss = coins.getChildren();
 
         for (let i in coinnss) {
@@ -556,14 +579,13 @@ class Game extends Phaser.Scene {
                 .layout();
             buttons
                 .on("button.click", function(button, index, pointer, event) {
-                    if (jump == 1 && index == 0) {
-                        jump = 0;
+                    if (index == 0 && onFloor) {
                         player.body.setVelocity(
                             player.body.velocity.x,
                             player.body.velocity.y - 100
                         );
                     } else if (index == 1) {
-                        activebox = 1;
+                        activeBox = 1;
                     } else if (index == 2) {
                         if (activeSound == 0) {
                             activeSound = 1;
@@ -613,6 +635,9 @@ class Game extends Phaser.Scene {
             }
         });
 
+
+
+
         //camera
         cam = this.add.sprite(256, 1920, "cam");
         this.cameras.main.startFollow(cam);
@@ -622,6 +647,28 @@ class Game extends Phaser.Scene {
     }
 
     update() {
+
+            var v = zpopup.visible;
+            if ((player.x < 272 || player.x > 330) && v == true) {
+                if (canMove && (z.isDown || activeBox == 1)) {
+                    activeBox = 0
+                    console.log("txt")
+                    canMove = false;
+                    createTextBox(this, 100, 1850, {
+                        wrapWidth: 200,
+                        fixedWidth: 190,
+                        fixedHeight: 45,
+                    }).start(content, 50);
+                }
+            }
+
+            if (player.x > 360 && player.x < 420) {
+                zpopup.setVisible(true);
+            } else {
+                zpopup.setVisible(false);
+            }
+
+
             //console.log(player.body.velocity.y)
             let str = player.anims.getName();
             if (player.body.velocity.x == 0 && str != "idle") {
@@ -646,11 +693,12 @@ class Game extends Phaser.Scene {
                     player.play("run");
                 }
                 player.flipX = true;
-            } else if (w.isDown || upKeyDown) {
-                player.setVelocityY(-80);
-            } else if (s.isDown || downKeyDown) {
-                player.setVelocityY(80);
-            }
+             } 
+            //else if (w.isDown || upKeyDown) {
+            //     player.setVelocityY(-80);
+            // } else if (s.isDown || downKeyDown) {
+            //     player.setVelocityY(80);
+            // }
 
             if (x.isDown && player.x > 230 && player.x < 270 && !activeText) {
                 //reset = true;
@@ -774,7 +822,8 @@ var createTextBox = function(scene, x, y, config) {
             function() {
                 if (this.isLastPage) {
                     canMove = true;
-                    activeText = false;
+                    activeBox = 0;
+                    console.log("lastPage")
                     this.destroy();
                 }
 
@@ -883,8 +932,6 @@ function morreu() {
         let hh2 = [];
         hh2 = hh[1].split(".");
         h = hh[0] + " " + hh2[0];
-        h = h.replace("-", "/");
-        h = h.replace("-", "/");
         hrFim = h;
 
         console.log("h': " + hrFim);
@@ -909,13 +956,15 @@ function morreu() {
             })
             .done(function() {
                 morreu = true;
-                //this.scene.start('gameOver');
+                location.reload()
             })
             .fail(function(jqXHR, textStatus, msg) {
                 console.log(msg);
                 morreu = true;
+                location.reload()
                 //this.scene.start('gameOver');
             });
+            
     }
     mortes++
     danoQueda = false;

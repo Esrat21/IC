@@ -37,7 +37,7 @@ var config = {
         default: 'arcade',
         gravity: 0
     },
-    scene: [Game],
+    scene: [Menu,Game,Quiz],
 };
 
 $.ajax({

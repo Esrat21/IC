@@ -19,8 +19,8 @@ let hh2 = [];
 hh2 = hh[1].split(".")
 h = hh[0] + " " + hh2[0];
 
-h = h.replace("-", "/");
-h = h.replace("-", "/");
+// h = h.replace("-", "/");
+// h = h.replace("-", "/");
 
 hrInicio = h;
 
